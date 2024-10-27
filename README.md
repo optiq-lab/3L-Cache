@@ -5,29 +5,40 @@
 #### The main development of libCacheSim is at [https://github.com/1a1a11a/libCacheSim](https://github.com/1a1a11a/libCacheSim), the [cachemon](https://github.com/cachemon/libCacheSim) repo is a mirror of the stable branch. Please fork and submit PR to this repo. 
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
-- [What is libCacheSim](#what-is-libcachesim)
-- [libCacheSim features](#libcachesim-features)
-- [Supported algorithms](#supported-algorithms)
-- [Build and Install libCacheSim](#build-and-install-libcachesim)
-  - [One-line install](#one-line-install)
-  - [Install dependency](#install-dependency)
-  - [Build libCacheSim](#build-libcachesim)
-- [Usage](#usage)
-  - [cachesim (a high-performance cache simulator)](#cachesim-a-high-performance-cache-simulator)
-  - [Trace analysis](#trace-analysis)
-  - [Using libCacheSim as a library](#using-libcachesim-as-a-library)
-  - [Extending libCacheSim (new algorithms and trace types)](#extending-libcachesim-new-algorithms-and-trace-types)
-- [Open source cache traces](#open-source-cache-traces)
-- [Questions?](#questions)
-- [Contributions](#contributions)
-- [Reference](#reference)
-- [License](#license)
-- [Related](#related)
+- [libCacheSim - building and running cache simulations](#libcachesim---building-and-running-cache-simulations)
+      - [The main development of libCacheSim is at https://github.com/1a1a11a/libCacheSim, the cachemon repo is a mirror of the stable branch. Please fork and submit PR to this repo.](#the-main-development-of-libcachesim-is-at-httpsgithubcom1a1a11alibcachesim-the-cachemon-repo-is-a-mirror-of-the-stable-branch-please-fork-and-submit-pr-to-this-repo)
+  - [News](#news)
+  - [What is libCacheSim](#what-is-libcachesim)
+  - [libCacheSim features](#libcachesim-features)
+  - [Supported algorithms](#supported-algorithms)
+    - [Eviction algorithms](#eviction-algorithms)
+    - [Admission algorithms](#admission-algorithms)
+    - [Prefetching algorithms](#prefetching-algorithms)
+  - [Build and Install libCacheSim](#build-and-install-libcachesim)
+    - [One-line install](#one-line-install)
+    - [Install dependency](#install-dependency)
+    - [Build libCacheSim](#build-libcachesim)
+  - [Usage](#usage)
+    - [cachesim (a high-performance cache simulator)](#cachesim-a-high-performance-cache-simulator)
+      - [basic usage](#basic-usage)
+      - [Run a single cache simulation](#run-a-single-cache-simulation)
+      - [Run multiple cache simulations with different cache sizes](#run-multiple-cache-simulations-with-different-cache-sizes)
+      - [Plot miss ratio curve](#plot-miss-ratio-curve)
+    - [Trace analysis](#trace-analysis)
+    - [Using libCacheSim as a library](#using-libcachesim-as-a-library)
+    - [Extending libCacheSim (new algorithms and trace types)](#extending-libcachesim-new-algorithms-and-trace-types)
+  - [Open source cache traces](#open-source-cache-traces)
+  - [Questions?](#questions)
+  - [Contributions](#contributions)
+  - [Reference](#reference)
+  - [License](#license)
+  - [Related](#related)
 <!-- TOC end -->
 
 
 <!-- TOC --><a name="news"></a>
 ## News
+* **2024 Oct**: **S3-FIFO** gets an upgrade! Please try out the new version (the old is now called S3-FIFOv0).
 * **2023 June**: **QDLP** is available now, see [our paper](https://dl.acm.org/doi/10.1145/3593856.3595887) for details.
 * **2023 Oct**: **[S3-FIFO](https://dl.acm.org/doi/10.1145/3600006.3613147)** and **SIEVE(https://sievecache.com)** are available! These are very simple algorithms that are very effective in reducing cache misses. Try them out in libCacheSim and your production!
 * **2024 Jan**: We compiled a list of open-source cache datasets at the bottom of this page 

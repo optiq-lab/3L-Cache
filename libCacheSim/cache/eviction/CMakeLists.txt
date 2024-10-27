@@ -32,6 +32,7 @@ set(sourceC
         FIFO_Reinsertion.c
 
         S3FIFO.c
+        S3FIFOv0.c
         S3FIFOd.c
 
         other/flashProb.c
