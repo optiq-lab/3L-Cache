@@ -29,9 +29,10 @@ typedef struct {
   cache_obj_t *q_head;
   cache_obj_t *q_tail;
   // clock uses one-bit counter
-  int n_bit_counter;
+  int32_t n_bit_counter;
   // max_freq = 1 << (n_bit_counter - 1)
-  int max_freq;
+  int32_t max_freq;
+  int32_t init_freq;
 
   int64_t n_obj_rewritten;
   int64_t n_byte_rewritten;
