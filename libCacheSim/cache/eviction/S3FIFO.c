@@ -1,7 +1,7 @@
 //
-//  This version (S3FIFO.c) differs from the original S3-FIFO (S3FIFOv0.c) in that when the small queue is full, but the cache is not full,
-//  the original S3-FIFO will insert into the small queue, but this version will insert into the main queue.
-//  This version is in general better than the original S3-FIFO because
+//  This version (S3FIFO.c) differs from the original S3-FIFO (S3FIFOv0.c) in that when the small queue is full, but the
+//  cache is not full, the original S3-FIFO will insert into the small queue, but this version will insert into the main
+//  queue. This version is in general better than the original S3-FIFO because
 //    1. the objects inserted after the cache is full are evicted more quickly
 //    2. the objects inserted between the small queue is full and the cache is full are kept slightly longer
 //
@@ -483,8 +483,8 @@ static inline bool S3FIFO_can_insert(cache_t *cache, const request_t *req) {
 // ***********************************************************************
 static const char *S3FIFO_current_params(S3FIFO_params_t *params) {
   static __thread char params_str[128];
-  snprintf(params_str, 128, "fifo-size-ratio=%.4lf,main-cache=%s\n", params->fifo_size_ratio,
-           params->main_cache->cache_name);
+  snprintf(params_str, 128, "fifo-size-ratio=%.4lf,ghost-size-ratio=%.4lf,move-to-main-threshold=%d\n",
+           params->fifo_size_ratio, params->ghost_size_ratio, params->move_to_main_threshold);
   return params_str;
 }
 

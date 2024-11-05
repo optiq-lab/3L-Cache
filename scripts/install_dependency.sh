@@ -20,9 +20,11 @@ setup_macOS() {
 
 setup_xgboost() {
     pushd /tmp/
-	git clone --recursive https://github.com/dmlc/xgboost
+	if [ ! -d "xgboost" ]; then
+		git clone --recursive https://github.com/dmlc/xgboost
+	fi
 	pushd xgboost
-	mkdir build
+	mkdir build || true
 	pushd build
 	cmake ..
 	if [[ ${GITHUB_ACTIONS:-} == "true" ]]; then
@@ -35,7 +37,9 @@ setup_xgboost() {
 
 setup_lightgbm() {
     pushd /tmp/
-	git clone --recursive https://github.com/microsoft/LightGBM
+	if [ ! -d "LightGBM" ]; then
+		git clone --recursive https://github.com/microsoft/LightGBM
+	fi
 	pushd LightGBM
 	mkdir build || true
 	pushd build
@@ -49,9 +53,11 @@ setup_lightgbm() {
 }
 
 setup_zstd() {
-    pushd /tmp/
-    wget https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-1.5.0.tar.gz
-    tar xvf zstd-1.5.0.tar.gz;
+    pushd /tmp/;
+	if [ ! -f "zstd-1.5.0.tar.gz" ]; then 
+	    wget https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-1.5.0.tar.gz
+	    tar xvf zstd-1.5.0.tar.gz;
+	fi
     pushd zstd-1.5.0/build/cmake/
     mkdir _build || true
     pushd _build/;
