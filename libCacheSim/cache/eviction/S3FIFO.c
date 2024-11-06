@@ -473,7 +473,7 @@ static inline int64_t S3FIFO_get_n_obj(const cache_t *cache) {
 static inline bool S3FIFO_can_insert(cache_t *cache, const request_t *req) {
   S3FIFO_params_t *params = (S3FIFO_params_t *)cache->eviction_params;
 
-  return req->obj_size <= params->fifo->cache_size;
+  return req->obj_size <= params->fifo->cache_size && cache_can_insert_default(cache, req);
 }
 
 // ***********************************************************************

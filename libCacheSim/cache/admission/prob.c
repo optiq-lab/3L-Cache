@@ -29,7 +29,7 @@ static void prob_admissioner_parse_params(const char *init_params,
                                           prob_admission_params_t *pa) {
   if (init_params == NULL) {
     pa->admission_probability = 0.5;
-    INFO("use default admission probability: %f", pa->admission_probability);
+    INFO("use default admission probability: %f\n", pa->admission_probability);
   } else {
     char *params_str = strdup(init_params);
     char *old_params_str = params_str;
@@ -51,6 +51,7 @@ static void prob_admissioner_parse_params(const char *init_params,
         if (strlen(end) > 2) {
           ERROR("param parsing error, find string \"%s\" after number\n", end);
         }
+        INFO("use admission probability: %f\n", pa->admission_probability);
       } else {
         ERROR("probabilistic admission does not have parameter %s\n", key);
       }

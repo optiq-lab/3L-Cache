@@ -444,7 +444,7 @@ static inline int64_t S3LRU_get_n_obj(const cache_t *cache) {
 static inline bool S3LRU_can_insert(cache_t *cache, const request_t *req) {
   S3LRU_params_t *params = (S3LRU_params_t *)cache->eviction_params;
 
-  return req->obj_size <= params->LRU->cache_size;
+  return req->obj_size <= params->LRU->cache_size && cache_can_insert_default(cache, req);
 }
 
 // ***********************************************************************

@@ -88,7 +88,7 @@ extern pthread_mutex_t log_mtx;
   do {                           \
     static bool printed = false; \
     if (!printed) {              \
-      WARN(FMT, ##__VA_ARGS__);  \
+      DEBUG(FMT, ##__VA_ARGS__);  \
       printed = true;            \
       fflush(stdout);            \
     }                            \
