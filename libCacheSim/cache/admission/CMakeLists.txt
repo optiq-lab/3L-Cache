@@ -1,5 +1,5 @@
 
-add_library(admissionC prob.c size.c bloomfilter.c)
+add_library(admissionC prob.c size.c bloomfilter.c sizeProbabilistic.c)
 add_library(admissionCpp adaptsize.cpp)
 
 
