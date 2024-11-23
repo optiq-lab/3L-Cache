@@ -23,7 +23,8 @@ install_cmake() {
 	wget https://github.com/Kitware/CMake/releases/download/v3.31.0/cmake-3.31.0-linux-x86_64.sh;
 	mkdir -p $HOME/software/cmake 2>/dev/null || true;
 	bash cmake-3.31.0-linux-x86_64.sh --skip-license --prefix=$HOME/software/cmake;
-	echo 'export PATH=$HOME/software/cmake/bin:$PATH' >> $HOME/.$(echo $0 | tr -d -)rc;
+	echo 'export PATH=$HOME/software/cmake/bin:$PATH' >> $HOME/.bashrc;
+	echo 'export PATH=$HOME/software/cmake/bin:$PATH' >> $HOME/.zshrc;
 	popd;
 }
 
