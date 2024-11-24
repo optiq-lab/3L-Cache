@@ -16,8 +16,12 @@ Convert a trace to oracleGeneral format so you can run it faster (10x speedup) u
 # the first parameter is the input trace, the second parameter is trace type, the third parameter is the output trace path
 ./bin/traceConv ../data/cloudPhysicsIO.txt txt cloudPhysicsIO.oracleGeneral.bin
 ```
-Note that the conversion supports all trace types including csv trace. Moreover, if the object id is numeric, add the option `-e obj_id_is_num=1` to the command line, which reduces memory usage.
+Note that the conversion supports all trace types including csv trace. Moreover, if the object id is numeric, add the option `-t obj_id_is_num=1` to the command line, which reduces memory usage.
 
+```
+a trace using space as the delimiter and numeric object id
+./bin/traceConv /disk/trace.csv csv -t "time-col=1,obj-id-col=2,obj-size-col=3,delimiter= ,obj-id-is-num=1"
+```
 
 We can also sample a trace to reduce the size of the trace. 
 ```bash
