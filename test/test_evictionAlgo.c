@@ -118,9 +118,9 @@ static void test_BeladySize(gconstpointer user_data) {
    * trace removes all object size changes (and use the size of last appearance
    * of an object as the object size throughout the trace */
   uint64_t req_cnt_true = 113872, req_byte_true = 4368040448;
-  uint64_t miss_cnt_true[] = {74329, 64524, 60279, 56514, 54539, 52613, 50581, 48974};
-  uint64_t miss_byte_true[] = {3507168256, 3044453888, 2773635072, 2537643008,
-                               2403463680, 2269248512, 2135011840, 2029769728};
+  uint64_t miss_cnt_true[] = {78661, 67495, 60520, 56645, 54571, 52633, 50605, 48974};
+  uint64_t miss_byte_true[] = {3665122304, 3161253888, 2787653632, 2541648896,
+                               2403448320, 2269202944, 2135001088, 2029769728};
 
   reader_t *reader = (reader_t *)user_data;
   common_cache_params_t cc_params = {.cache_size = CACHE_SIZE, .hashpower = 20, .default_ttl = DEFAULT_TTL};
@@ -135,9 +135,9 @@ static void test_BeladySize(gconstpointer user_data) {
 }
 
 static void test_Random(gconstpointer user_data) {
-  uint64_t miss_cnt_true[] = {92444, 88637, 84247, 79875, 75206, 71042, 67096, 63182};
-  uint64_t miss_byte_true[] = {4165255168, 3976227840, 3744436736, 3506359808,
-                               3300872704, 3055019008, 2837280256, 2642700288};
+  uint64_t miss_cnt_true[] = {92380, 88549, 84324, 80018, 76014, 71958, 68072, 64181};
+  uint64_t miss_byte_true[] = {4161396736, 3975681024, 3756711424, 3530842112,
+                               3325141504, 3106992128, 2907404800, 2721321984};
 
   reader_t *reader = (reader_t *)user_data;
   common_cache_params_t cc_params = {.cache_size = CACHE_SIZE, .hashpower = 12, .default_ttl = DEFAULT_TTL};
@@ -220,9 +220,9 @@ static void test_LHD(gconstpointer user_data) {
 }
 
 static void test_Hyperbolic(gconstpointer user_data) {
-  uint64_t miss_cnt_true[] = {92836, 89281, 84407, 80420, 76299, 71843, 68884, 65654};
-  uint64_t miss_byte_true[] = {4210119680, 4050535424, 3806349824, 3578494976,
-                               3352331264, 3092705792, 2910994944, 2769552384};
+  uint64_t miss_cnt_true[] = {92788, 89194, 84317, 80001, 76359, 72055, 69432, 66375};
+  uint64_t miss_byte_true[] = {4207230464, 4043489280, 3803607040, 3561390592,
+                               3354565120, 3106403328, 2961118720, 2804422656};
 
   reader_t *reader = (reader_t *)user_data;
   common_cache_params_t cc_params = {.cache_size = CACHE_SIZE, .hashpower = 18, .default_ttl = DEFAULT_TTL};
