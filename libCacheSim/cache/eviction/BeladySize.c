@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 // #define EXACT_Belady 1
-static const char* DEFAULT_PARAMS = "n-sample=128";
+static const char *DEFAULT_PARAMS = "n-sample=128";
 
 typedef struct {
   // how many samples to take at each eviction
@@ -28,12 +28,10 @@ typedef struct {
 // ****                                                               ****
 // ***********************************************************************
 
-static void BeladySize_parse_params(cache_t *cache,
-                                    const char *cache_specific_params);
+static void BeladySize_parse_params(cache_t *cache, const char *cache_specific_params);
 static void BeladySize_free(cache_t *cache);
 static bool BeladySize_get(cache_t *cache, const request_t *req);
-static cache_obj_t *BeladySize_find(cache_t *cache, const request_t *req,
-                                    const bool update_cache);
+static cache_obj_t *BeladySize_find(cache_t *cache, const request_t *req, const bool update_cache);
 static cache_obj_t *BeladySize_insert(cache_t *cache, const request_t *req);
 static cache_obj_t *BeladySize_to_evict(cache_t *cache, const request_t *req);
 static void BeladySize_evict(cache_t *cache, const request_t *req);
@@ -53,8 +51,7 @@ static void BeladySize_remove_obj(cache_t *cache, cache_obj_t *obj);
  * @param ccache_params some common cache parameters
  * @param cache_specific_params Belady specific parameters, should be NULL
  */
-cache_t *BeladySize_init(const common_cache_params_t ccache_params,
-                         const char *cache_specific_params) {
+cache_t *BeladySize_init(const common_cache_params_t ccache_params, const char *cache_specific_params) {
   cache_t *cache = cache_struct_init("BeladySize", ccache_params, cache_specific_params);
 
   cache->cache_init = BeladySize_init;
@@ -66,8 +63,7 @@ cache_t *BeladySize_init(const common_cache_params_t ccache_params,
   cache->remove = BeladySize_remove;
   cache->to_evict = BeladySize_to_evict;
 
-  BeladySize_params_t *params =
-      (BeladySize_params_t *)malloc(sizeof(BeladySize_params_t));
+  BeladySize_params_t *params = (BeladySize_params_t *)malloc(sizeof(BeladySize_params_t));
   cache->eviction_params = params;
 
   BeladySize_parse_params(cache, DEFAULT_PARAMS);
@@ -107,9 +103,7 @@ static void BeladySize_free(cache_t *cache) {
  * @param req
  * @return true if cache hit, false if cache miss
  */
-static bool BeladySize_get(cache_t *cache, const request_t *req) {
-  return cache_get_base(cache, req);
-}
+static bool BeladySize_get(cache_t *cache, const request_t *req) { return cache_get_base(cache, req); }
 
 // ***********************************************************************
 // ****                                                               ****
@@ -127,8 +121,7 @@ static bool BeladySize_get(cache_t *cache, const request_t *req) {
  *  and if the object is expired, it is removed from the cache
  * @return the object or NULL if not found
  */
-static cache_obj_t *BeladySize_find(cache_t *cache, const request_t *req,
-                             const bool update_cache) {
+static cache_obj_t *BeladySize_find(cache_t *cache, const request_t *req, const bool update_cache) {
   cache_obj_t *obj = cache_find_base(cache, req, update_cache);
 
   if (!update_cache) {
@@ -174,18 +167,15 @@ struct hash_iter_user_data {
   uint64_t max_score;
 };
 
-static inline void hashtable_iter_Belady_size(cache_obj_t *cache_obj,
-                                              void *userdata) {
-  struct hash_iter_user_data *iter_userdata =
-      (struct hash_iter_user_data *)userdata;
+static inline void hashtable_iter_Belady_size(cache_obj_t *cache_obj, void *userdata) {
+  struct hash_iter_user_data *iter_userdata = (struct hash_iter_user_data *)userdata;
   if (iter_userdata->max_score == UINT64_MAX) return;
 
   uint64_t obj_score;
   if (cache_obj->Belady.next_access_vtime == -1)
     obj_score = UINT64_MAX;
   else
-    obj_score = cache_obj->obj_size * (cache_obj->Belady.next_access_vtime -
-                                       iter_userdata->curr_vtime);
+    obj_score = cache_obj->obj_size * (cache_obj->Belady.next_access_vtime - iter_userdata->curr_vtime);
 
   if (obj_score > iter_userdata->max_score) {
     iter_userdata->to_evict_obj = cache_obj;
@@ -209,8 +199,7 @@ static cache_obj_t *BeladySize_to_evict(cache_t *cache, const request_t *req) {
   iter_userdata.max_score = 0;
   iter_userdata.to_evict_obj = NULL;
 
-  hashtable_foreach(cache->hashtable, hashtable_iter_Belady_size,
-                    &iter_userdata);
+  hashtable_foreach(cache->hashtable, hashtable_iter_Belady_size, &iter_userdata);
 
   return iter_userdata.to_evict_obj;
 }
@@ -219,12 +208,11 @@ static cache_obj_t *BeladySize_to_evict(cache_t *cache, const request_t *req) {
 static cache_obj_t *BeladySize_to_evict(cache_t *cache, const request_t *req) {
   BeladySize_params_t *params = (BeladySize_params_t *)cache->eviction_params;
   cache_obj_t *obj_to_evict = NULL, *sampled_obj;
-  int64_t obj_to_evict_score = -1, sampled_obj_score;
+  double obj_to_evict_score = -1, sampled_obj_score;
   for (int i = 0; i < params->n_sample; i++) {
     sampled_obj = hashtable_rand_obj(cache->hashtable);
     sampled_obj_score =
-        (int64_t)sampled_obj->obj_size *
-        (int64_t)(sampled_obj->Belady.next_access_vtime - cache->n_req);
+        log((double)sampled_obj->obj_size) + log((double)(sampled_obj->Belady.next_access_vtime - cache->n_req));
     if (obj_to_evict_score < sampled_obj_score) {
       obj_to_evict = sampled_obj;
       obj_to_evict_score = sampled_obj_score;
@@ -233,7 +221,11 @@ static cache_obj_t *BeladySize_to_evict(cache_t *cache, const request_t *req) {
   if (obj_to_evict == NULL) {
     WARN(
         "BeladySize_to_evict: obj_to_evict is NULL, "
-        "maybe cache size is too small or hash power too large\n");
+        "maybe cache size is too small or hash power too large, "
+        "current hash table size %lu, n_obj %lu, cache size %lu, request size %lu, and %d samples "
+        "obj_to_evict_score %.4lf sampled_obj_score %.4lf\n",
+        hashsize(cache->hashtable->hashpower), cache->hashtable->n_obj, cache->cache_size, req->obj_size,
+        params->n_sample, obj_to_evict_score, sampled_obj_score);
     return BeladySize_to_evict(cache, req);
   }
 
@@ -285,8 +277,7 @@ static const char *BeladySize_current_params(BeladySize_params_t *params) {
  * to see the default parameters, use current_params()
  * or use -e "print" with cachesim
  */
-static void BeladySize_parse_params(cache_t *cache,
-                                    const char *cache_specific_params) {
+static void BeladySize_parse_params(cache_t *cache, const char *cache_specific_params) {
   BeladySize_params_t *params = (BeladySize_params_t *)cache->eviction_params;
   char *params_str = strdup(cache_specific_params);
   char *old_params_str = params_str;
@@ -312,8 +303,7 @@ static void BeladySize_parse_params(cache_t *cache,
       printf("current parameters: %s\n", BeladySize_current_params(params));
       exit(0);
     } else {
-      ERROR("%s does not have parameter %s, support %s\n", cache->cache_name,
-            key, BeladySize_current_params(params));
+      ERROR("%s does not have parameter %s, support %s\n", cache->cache_name, key, BeladySize_current_params(params));
       exit(1);
     }
   }
