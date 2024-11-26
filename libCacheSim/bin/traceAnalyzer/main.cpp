@@ -16,13 +16,6 @@ int main(int argc, char *argv[]) {
       args.reader, args.ofilepath, args.analysis_option, args.analysis_param);
   stat->run();
 
-  // } else if (strcasecmp(args.task, "hotOS23") == 0) {
-  //   args.analysis_option.popularity_decay = true;
-  //   args.analysis_option.prob_at_age = true;
-  //   args.analysis_option.lifetime = false;
-
-  //   args.analysis_param.time_window = 300;
-
   ofstream ofs("traceStat", ios::out | ios::app);
   ofs << *stat << endl;
   ofs.close();

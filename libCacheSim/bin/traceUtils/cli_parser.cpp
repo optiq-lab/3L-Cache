@@ -250,6 +250,7 @@ void parse_cmd(int argc, char *argv[], struct arguments *args) {
   args->trace_type_str = args->args[1];
   assert(N_ARGS == 2);
 
+  args->trace_type = trace_type_str_to_enum(args->trace_type_str, args->trace_path);
   args->reader = create_reader(args->trace_type_str, args->trace_path,
                                args->trace_type_params, args->n_req,
                                args->ignore_obj_size, 0);
