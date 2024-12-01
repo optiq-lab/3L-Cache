@@ -45,6 +45,8 @@ cache_obj_t *chained_hashtable_rand_obj_v2(hashtable_t *hashtable);
 void chained_hashtable_foreach_v2(hashtable_t *hashtable,
                                   hashtable_iter iter_func, void *user_data);
 
+void print_chained_hashtable_v2(const hashtable_t *hashtable);
+
 void free_chained_hashtable_v2(hashtable_t *hashtable);
 
 void check_hashtable_integrity_v2(const hashtable_t *hashtable);

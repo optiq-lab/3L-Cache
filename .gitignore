@@ -13,6 +13,7 @@ example/cacheSimulatorC/cmake-build-debug
 .vscode/*
 *.log
 fig/
+result/
 # Chaos
 sftp-config.json
 # Clangd cache

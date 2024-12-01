@@ -429,6 +429,22 @@ static void print_hashbucket_item_distribution(const hashtable_t *hashtable) {
   printf("\n #################### %d \n", n_obj);
 }
 
+
+void print_chained_hashtable_v2(const hashtable_t *hashtable) {
+  for (int i = 0; i < hashsize(hashtable->hashpower); i++) {
+    cache_obj_t *cur_obj = hashtable->ptr_table[i];
+    if (cur_obj == NULL) {
+      continue;
+    }
+    printf("hash bucket %d: ", i);
+    while (cur_obj != NULL) {
+      printf("%lu, ", (unsigned long)cur_obj->obj_id);
+      cur_obj = cur_obj->hash_next;
+    }
+    printf("\n");
+  }
+}
+
 #ifdef __cplusplus
 }
 #endif
