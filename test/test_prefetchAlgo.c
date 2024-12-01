@@ -56,7 +56,7 @@ static void test_Mithril(gconstpointer user_data) {
   cache_t *cache = create_test_cache("Mithril", cc_params, reader, NULL);
   g_assert_true(cache != NULL);
   cache_stat_t *res = simulate_at_multi_sizes_with_step_size(
-      reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores());
+      reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores(), false);
 
   print_results(cache, res);
   _verify_profiler_results(res, CACHE_SIZE / STEP_SIZE, g_req_cnt_true,
@@ -74,7 +74,7 @@ static void test_OBL(gconstpointer user_data) {
   common_cache_params_t cc_params = {.cache_size = CACHE_SIZE, .hashpower = 20, .default_ttl = DEFAULT_TTL};
   cache_t *cache = create_test_cache("OBL", cc_params, reader, NULL);
   g_assert_true(cache != NULL);
-  cache_stat_t *res = simulate_at_multi_sizes_with_step_size(reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores());
+  cache_stat_t *res = simulate_at_multi_sizes_with_step_size(reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores(), false);
 
   print_results(cache, res);
   _verify_profiler_results(res, CACHE_SIZE / STEP_SIZE, g_req_cnt_true, miss_cnt_true, g_req_byte_true, miss_byte_true);
@@ -91,7 +91,7 @@ static void test_PG(gconstpointer user_data) {
   common_cache_params_t cc_params = {.cache_size = CACHE_SIZE, .hashpower = 20, .default_ttl = DEFAULT_TTL};
   cache_t *cache = create_test_cache("PG", cc_params, reader, NULL);
   g_assert_true(cache != NULL);
-  cache_stat_t *res = simulate_at_multi_sizes_with_step_size(reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores());
+  cache_stat_t *res = simulate_at_multi_sizes_with_step_size(reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores(), false);
 
   print_results(cache, res);
   _verify_profiler_results(res, CACHE_SIZE / STEP_SIZE, g_req_cnt_true, miss_cnt_true, g_req_byte_true, miss_byte_true);

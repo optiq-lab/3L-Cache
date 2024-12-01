@@ -23,7 +23,7 @@ static void test_simulator_no_size(gconstpointer user_data) {
   cache_t *cache = LRU_init(cc_params, NULL);
   g_assert_true(cache != NULL);
   cache_stat_t *res = simulate_at_multi_sizes_with_step_size(
-      reader, cache, step_size, NULL, 0, 0, _n_cores());
+      reader, cache, step_size, NULL, 0, 0, _n_cores(), false);
 
   //  uint64_t* mc = _get_lru_miss_cnt(reader, get_num_of_req(reader));
 
@@ -68,7 +68,7 @@ static void test_simulator(gconstpointer user_data) {
   g_assert_true(cache != NULL);
 
   cache_stat_t *res = simulate_at_multi_sizes_with_step_size(
-      reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores());
+      reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores(), false);
   // for (uint64_t i = 0; i < CACHE_SIZE / STEP_SIZE; i++) {
   //   printf(
   //       "cache size: %lu, n_req: %lu, n_req_byte: %lu, n_miss: %8lu %16lu\n
@@ -88,7 +88,7 @@ static void test_simulator(gconstpointer user_data) {
   uint64_t cache_sizes[] = {STEP_SIZE, STEP_SIZE * 2, STEP_SIZE * 4,
                             STEP_SIZE * 7};
   res = simulate_at_multi_sizes(reader, cache, 4, cache_sizes, NULL, 0, 0,
-                                _n_cores());
+                                _n_cores(), false);
   g_assert_cmpuint(res[0].cache_size, ==, STEP_SIZE);
   g_assert_cmpuint(res[1].n_req_byte, ==, req_byte_true);
   g_assert_cmpuint(res[3].n_req, ==, req_cnt_true);
@@ -107,7 +107,7 @@ static void test_simulator(gconstpointer user_data) {
   }
 
   res = simulate_with_multi_caches(reader, caches, 4, NULL, 0, 0, _n_cores(),
-                                   false);
+                                   false, false);
   g_assert_cmpuint(res[0].cache_size, ==, STEP_SIZE);
   g_assert_cmpuint(res[1].n_req_byte, ==, req_byte_true);
   g_assert_cmpuint(res[3].n_req, ==, req_cnt_true);
@@ -139,7 +139,7 @@ static void test_simulator_with_warmup1(gconstpointer user_data) {
   g_assert_true(cache != NULL);
 
   cache_stat_t *res = simulate_at_multi_sizes_with_step_size(
-      reader, cache, STEP_SIZE, reader, 0, 0, _n_cores());
+      reader, cache, STEP_SIZE, reader, 0, 0, _n_cores(), false);
 
   for (uint64_t i = 0; i < CACHE_SIZE / STEP_SIZE; i++) {
     // printf("cache size: %lu, n_req: %lu, n_req_byte: %lu, n_miss: %8lu
@@ -171,7 +171,7 @@ static void test_simulator_with_warmup2(gconstpointer user_data) {
   g_assert_true(cache != NULL);
 
   cache_stat_t *res = simulate_at_multi_sizes_with_step_size(
-      reader, cache, STEP_SIZE, NULL, 0.2, 0, _n_cores());
+      reader, cache, STEP_SIZE, NULL, 0.2, 0, _n_cores(), false);
 
   for (uint64_t i = 0; i < CACHE_SIZE / STEP_SIZE; i++) {
     // printf("cache size: %lu, n_req: %lu, n_req_byte: %lu, n_miss: %8lu
@@ -203,7 +203,7 @@ static void test_simulator_with_ttl(gconstpointer user_data) {
   g_assert_true(cache != NULL);
 
   cache_stat_t *res = simulate_at_multi_sizes_with_step_size(
-      reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores());
+      reader, cache, STEP_SIZE, NULL, 0, 0, _n_cores(), false);
 
   for (uint64_t i = 0; i < CACHE_SIZE / STEP_SIZE; i++) {
     printf("cache size: %lu, n_req: %ld, n_req_byte: %ld, n_miss: %8ld %16ld\n",

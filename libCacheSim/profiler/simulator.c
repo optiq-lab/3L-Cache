@@ -32,12 +32,15 @@ typedef struct simulator_multithreading_params {
   gint *progress;
   gpointer other_data;
   bool free_cache_when_finish;
+  bool use_random_seed;
 } sim_mt_params_t;
 
 static void _simulate(gpointer data, gpointer user_data) {
   sim_mt_params_t *params = (sim_mt_params_t *)user_data;
   int idx = GPOINTER_TO_UINT(data) - 1;
-  set_rand_seed(rand());
+  if (params->use_random_seed) {
+    set_rand_seed(rand());
+  }
 
   cache_stat_t *result = params->result;
   reader_t *cloned_reader = clone_reader(params->reader);
@@ -139,7 +142,7 @@ static void _simulate(gpointer data, gpointer user_data) {
 cache_stat_t *simulate_at_multi_sizes_with_step_size(
     reader_t *const reader, const cache_t *cache, uint64_t step_size,
     reader_t *warmup_reader, double warmup_frac, int warmup_sec,
-    int num_of_threads) {
+    int num_of_threads, bool use_random_seed) {
   int num_of_sizes = (int)ceil((double)cache->cache_size / (double)step_size);
   get_num_of_req(reader);
   uint64_t *cache_sizes = my_malloc_n(uint64_t, num_of_sizes);
@@ -149,7 +152,7 @@ cache_stat_t *simulate_at_multi_sizes_with_step_size(
 
   cache_stat_t *res = simulate_at_multi_sizes(
       reader, cache, num_of_sizes, cache_sizes, warmup_reader, warmup_frac,
-      warmup_sec, num_of_threads);
+      warmup_sec, num_of_threads, use_random_seed);
   my_free(sizeof(uint64_t) * num_of_sizes, cache_sizes);
   return res;
 }
@@ -174,7 +177,8 @@ cache_stat_t *simulate_at_multi_sizes(reader_t *reader, const cache_t *cache,
                                       const uint64_t *cache_sizes,
                                       reader_t *warmup_reader,
                                       double warmup_frac, int warmup_sec,
-                                      int num_of_threads) {
+                                      int num_of_threads, 
+                                      bool use_random_seed) {
   int progress = 0;
 
   cache_stat_t *result = my_malloc_n(cache_stat_t, num_of_sizes);
@@ -191,6 +195,7 @@ cache_stat_t *simulate_at_multi_sizes(reader_t *reader, const cache_t *cache,
   params->result = result;
   params->free_cache_when_finish = true;
   params->progress = &progress;
+  params->use_random_seed = use_random_seed;
   g_mutex_init(&(params->mtx));
 
   // build the thread pool
@@ -250,7 +255,8 @@ cache_stat_t *simulate_with_multi_caches(reader_t *reader, cache_t *caches[],
                                          reader_t *warmup_reader,
                                          double warmup_frac, int warmup_sec,
                                          int num_of_threads,
-                                         bool free_cache_when_finish) {
+                                         bool free_cache_when_finish, 
+                                         bool use_random_seed) {
   assert(num_of_caches > 0);
   int i, progress = 0;
 
@@ -263,6 +269,7 @@ cache_stat_t *simulate_with_multi_caches(reader_t *reader, cache_t *caches[],
   params->caches = caches;
   params->warmup_reader = warmup_reader;
   params->warmup_sec = warmup_sec;
+  params->use_random_seed = use_random_seed;
   if (warmup_frac > 1e-6) {
     params->n_warmup_req =
         (uint64_t)((double)get_num_of_req(reader) * warmup_frac);
