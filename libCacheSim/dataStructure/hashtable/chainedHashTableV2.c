@@ -40,7 +40,6 @@ extern "C" {
 #define OBJ_EMPTY(cache_obj) ((cache_obj)->obj_size == 0)
 #define NEXT_OBJ(cur_obj) (((cache_obj_t *)(cur_obj))->hash_next)
 
-
 static void _copy_entries(hashtable_t *new_table, cache_obj_t **old_table, uint64_t old_size);
 static void _chained_hashtable_shrink_v2(hashtable_t *hashtable);
 static void _chained_hashtable_expand_v2(hashtable_t *hashtable);
@@ -164,7 +163,7 @@ void chained_hashtable_delete_v2(hashtable_t *hashtable, cache_obj_t *cache_obj)
     return;
   }
 
-  static int max_chain_len = 16;
+  static int max_chain_len = 64;
   int chain_len = 1;
   cache_obj_t *cur_obj = hashtable->ptr_table[hv];
   while (cur_obj != NULL && cur_obj->hash_next != cache_obj) {
@@ -287,7 +286,6 @@ cache_obj_t *chained_hashtable_rand_obj_v2(hashtable_t *hashtable) {
   while (hashtable->ptr_table[pos] == NULL) {
     n_tries += 1;
     if (n_tries > 32) {
-      DEBUG("shrink hash table size from 2**%d to 2**%d\n", hashtable->hashpower, hashtable->hashpower - 1);
       _chained_hashtable_shrink_v2(hashtable);
     }
     pos = next_rand() & hashmask(hashtable->hashpower);
@@ -356,8 +354,9 @@ static void _chained_hashtable_shrink_v2(hashtable_t *hashtable) {
   memset(hashtable->ptr_table, 0, hashsize(hashtable->hashpower) * sizeof(cache_obj_t *));
   ASSERT_NOT_NULL(hashtable->ptr_table, "unable to shrink hashtable to size %llu\n", hashsizeULL(hashtable->hashpower));
 
-  VERBOSE("hashtable resized from %llu to %llu\n", hashsizeULL((uint16_t)(hashtable->hashpower + 1)),
-          hashsizeULL(hashtable->hashpower));
+  DEBUG("shrink hash table size from %llu to %llu, new hashtable load %lu/%lu\n",
+        hashsizeULL((uint16_t)(hashtable->hashpower + 1)), hashsizeULL(hashtable->hashpower), hashtable->n_obj,
+        hashsize(hashtable->hashpower));
 
   _copy_entries(hashtable, old_table, hashsize(hashtable->hashpower + 1));
   my_free(sizeof(cache_obj_t) * hashsize(hashtable->hashpower + 1), old_table);
@@ -373,8 +372,9 @@ static void _chained_hashtable_expand_v2(hashtable_t *hashtable) {
   memset(hashtable->ptr_table, 0, hashsize(hashtable->hashpower) * sizeof(cache_obj_t *));
   ASSERT_NOT_NULL(hashtable->ptr_table, "unable to grow hashtable to size %llu\n", hashsizeULL(hashtable->hashpower));
 
-  DEBUG("expand hashtable from %llu to %llu entries\n", hashsizeULL((uint16_t)(hashtable->hashpower - 1)),
-          hashsizeULL(hashtable->hashpower));
+  DEBUG("expand hashtable from %llu to %llu entries, new hashtable load %lu/%lu\n",
+        hashsizeULL((uint16_t)(hashtable->hashpower - 1)), hashsizeULL(hashtable->hashpower), hashtable->n_obj,
+        hashsize(hashtable->hashpower));
 
   _copy_entries(hashtable, old_table, hashsize(hashtable->hashpower - 1));
   my_free(sizeof(cache_obj_t) * hashsize(hashtable->hashpower), old_table);
@@ -428,7 +428,6 @@ static void print_hashbucket_item_distribution(const hashtable_t *hashtable) {
   }
   printf("\n #################### %d \n", n_obj);
 }
-
 
 void print_chained_hashtable_v2(const hashtable_t *hashtable) {
   for (int i = 0; i < hashsize(hashtable->hashpower); i++) {
