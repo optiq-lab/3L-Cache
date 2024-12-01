@@ -16,6 +16,8 @@ extern "C" {
 #endif
 
 extern __thread uint64_t rand_seed;
+extern __thread __uint128_t g_lehmer64_state;
+
 
 void set_rand_seed(uint64_t seed);
 
@@ -25,8 +27,11 @@ void set_rand_seed(uint64_t seed);
  * @return
  */
 static inline uint64_t next_rand(void) {
-  rand_seed = 6364136223846793005 * rand_seed + 1442695040888963407;
-  return rand_seed;
+  // this random number generator does not work
+  // rand_seed = 6364136223846793005 * rand_seed + 1442695040888963407;
+  // return rand_seed;
+  g_lehmer64_state *= 0xda942042e4dd58b5;
+  return g_lehmer64_state >> 64;
 }
 
 static inline long long next_power_of_2(long long N) {
