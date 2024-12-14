@@ -24,8 +24,7 @@ extern "C" {
 
 #define LCS_TRACE_START_MAGIC 0x123456789abcdef0
 #define LCS_TRACE_END_MAGIC 0x123456789abcdef0
-
-#define MAX_LCS_VERSION 2
+#define CURR_STAT_VERSION 1
 #define N_MOST_COMMON 16
 
 /******************************************************************************/

@@ -23,11 +23,6 @@ static bool verify(lcs_trace_header_t *header) {
     return false;
   }
 
-  if (header->version > MAX_LCS_VERSION) {
-    ERROR("invalid trace file, lcs version %ld is not supported\n", (unsigned long)header->version);
-    return false;
-  }
-
   lcs_trace_stat_t *stat = &(header->stat);
   if (stat->n_req < 0 || stat->n_obj < 0) {
     ERROR("invalid trace file, n_req %ld, n_obj %ld\n", (unsigned long)stat->n_req, (unsigned long)stat->n_obj);
@@ -50,6 +45,7 @@ int lcsReader_setup(reader_t *reader) {
   reader->trace_format = BINARY_TRACE_FORMAT;
   reader->trace_start_offset = sizeof(lcs_trace_header_t);
   reader->obj_id_is_num = true;
+  reader->n_total_req = header->stat.n_req;
 
   if (reader->lcs_ver == 1) {
     reader->item_size = sizeof(lcs_req_v1_t);

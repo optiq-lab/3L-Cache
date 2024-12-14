@@ -51,8 +51,8 @@ void convert_to_lcs(reader_t *reader, std::string ofilepath, bool output_txt, bo
   std::unordered_map<int32_t, int32_t> ttl_cnt;
 
   lcs_trace_stat_t stat;
-  stat.version = 1;
   memset(&stat, 0, sizeof(stat));
+  stat.version = CURR_STAT_VERSION;
   int64_t n_req_total = get_num_of_req(reader);
   obj_map.reserve(n_req_total / 100 + 1e4);
 
@@ -98,18 +98,6 @@ void convert_to_lcs(reader_t *reader, std::string ofilepath, bool output_txt, bo
       }
     }
 
-    // if (lcs_ver == 1) {
-    //   // lcs_req_v1_t *lcs_req_v1 = reinterpret_cast<lcs_req_v1_t *>(lcs_req);
-    //   lcs_req_v1_t lcs_req;
-    //   lcs_req.clock_time = req->clock_time;
-    //   lcs_req.obj_id = req->obj_id;
-    //   lcs_req.obj_size = req->obj_size;
-    //   lcs_req.next_access_vtime = req->next_access_vtime;
-
-    //   ofile_temp.write(reinterpret_cast<char *>(&lcs_req), sizeof(lcs_req_v1));
-    // } else if (lcs_ver == 2) {
-
-    // lcs_req_v2_t *lcs_req_v2 = reinterpret_cast<lcs_req_v2_t *>(lcs_req);
     lcs_req_full_t lcs_req;
     lcs_req.clock_time = req->clock_time;
     lcs_req.obj_id = req->obj_id;
@@ -141,7 +129,6 @@ void convert_to_lcs(reader_t *reader, std::string ofilepath, bool output_txt, bo
     }
 
     ofile_temp.write(reinterpret_cast<char *>(&lcs_req), sizeof(lcs_req_full_t));
-    // }
 
     stat.n_req_byte += req->obj_size;
     stat.n_req += 1;
@@ -258,7 +245,7 @@ static void _analyze_trace(lcs_trace_stat_t &stat, const std::unordered_map<uint
   for (int i = 0; i < freq_cnt_vec.size(); i++) {
     for (int j = 0; j < freq_cnt_vec[i].second; j++) {
       log_freq[n] = log(static_cast<double>(freq_cnt_vec[i].first));
-      log_rank[n] = log(static_cast<double>(n+1));
+      log_rank[n] = log(static_cast<double>(n + 1));
       n++;
     }
   }
@@ -276,8 +263,8 @@ static void _analyze_trace(lcs_trace_stat_t &stat, const std::unordered_map<uint
     stat.most_common_freq_ratio[i] = (float)freq_cnt_vec[i].second / stat.n_obj;
   }
 
-  INFO("highest freq: %ld %ld %ld %ld skewness %.4lf\n", stat.highest_freq[0], stat.highest_freq[1], stat.highest_freq[2],
-       stat.highest_freq[3], stat.skewness);
+  INFO("highest freq: %ld %ld %ld %ld skewness %.4lf\n", stat.highest_freq[0], stat.highest_freq[1],
+       stat.highest_freq[2], stat.highest_freq[3], stat.skewness);
   INFO("most common freq (req fraction): %d(%.4lf) %d(%.4lf) %d(%.4lf) %d(%.4lf)...\n", stat.most_common_freq[0],
        stat.most_common_freq_ratio[0], stat.most_common_freq[1], stat.most_common_freq_ratio[1],
        stat.most_common_freq[2], stat.most_common_freq_ratio[2], stat.most_common_freq[3],
