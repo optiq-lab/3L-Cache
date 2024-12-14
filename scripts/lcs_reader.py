@@ -174,8 +174,15 @@ def read_header(ifile):
 
 
 def read_trace(ifilepath, n_max_req=-1):
-    ifile = open(ifilepath, "rb")
-    version = read_header(ifile)
+    if ifilepath.endswith(".zst"):
+        import zstandard as zstd
+        decompressor = zstd.ZstdDecompressor()
+        reader = decompressor.stream_reader(open(ifilepath, "rb"))
+    else:            
+        ifile = open(ifilepath, "rb")
+        reader = ifile
+        
+    version = read_header(reader)
     s = [
         struct.Struct("<IQIq"),
         struct.Struct("<IQIIq"),
@@ -185,7 +192,7 @@ def read_trace(ifilepath, n_max_req=-1):
     n_req = 0
 
     while True:
-        b = ifile.read(s.size)
+        b = reader.read(s.size)
         if not b:
             break
         req = s.unpack(b)
@@ -194,7 +201,7 @@ def read_trace(ifilepath, n_max_req=-1):
         if n_max_req > 0 and n_req >= n_max_req:
             break
 
-    ifile.close()
+    reader.close()
 
 
 if __name__ == "__main__":
