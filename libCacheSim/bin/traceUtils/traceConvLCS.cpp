@@ -108,7 +108,8 @@ void convert_to_lcs(reader_t *reader, std::string ofilepath, bool output_txt, bo
 
     if (lcs_req.op == OP_GET || lcs_req.op == OP_GETS || lcs_req.op == OP_READ) {
       stat.n_read++;
-    } else if (lcs_req.op == OP_SET || lcs_req.op == OP_REPLACE || lcs_req.op == OP_ADD || lcs_req.op == OP_UPDATE) {
+    } else if (lcs_req.op == OP_WRITE || lcs_req.op == OP_SET || lcs_req.op == OP_REPLACE || lcs_req.op == OP_ADD ||
+               lcs_req.op == OP_UPDATE) {
       stat.n_write++;
     } else if (lcs_req.op == OP_DELETE) {
       stat.n_delete++;

@@ -19,23 +19,19 @@ sys.path.append(BASEPATH)
 ###############################
 
 
-# this is used to convert lbn to lba
-SECTOR_SIZE = 512
 # this is used to convert requests to multiple 4K blocks
-BLOCK_SIZE = 4096
+BLOCK_SIZE = 4096 * 16
 
 
 def preprocess(ifilepath, ofilepath=None):
-    """we preprocess the trace into a csv format with only necessary information
+    """preprocess the trace into a csv format with only necessary information
+    this step aims to normalize the trace format before converting it to lcs format
 
-    Args:
-        ifilepath (_type_): _description_
-        ofilepath (_type_, optional): _description_. Defaults to None.
     """
-    # start_time = time.time()
+    start_time = time.time()
 
-    # if os.path.exists(ifilepath + ".stat"):
-    #     return
+    if os.path.exists(ifilepath + ".stat"):
+        return
 
     if not ofilepath:
         ofilepath = ifilepath + ".pre_lcs"
@@ -59,10 +55,6 @@ def preprocess(ifilepath, ofilepath=None):
             start_ts = ts
         end_ts = ts
         n_original_req += 1
-        # if n_original_req % 100000 == 0:
-        #     print(
-        #         f"{time.time()-start_time:8.2f}sec: {n_original_req/100000:.2f}, {n_req/100000:.2f}, {len(seen_blocks)/100000:.2f}"
-        #     )
 
         lba = int(offset)
         req_size = int(req_size)
@@ -75,13 +67,8 @@ def preprocess(ifilepath, ofilepath=None):
         else:
             print("Unknown operation: {}".format(op))
 
-        # write to file
-        assert (
-            req_size % SECTOR_SIZE == 0
-        ), "req_size is not multiple of sector size {}%{}".format(req_size, SECTOR_SIZE)
-        assert (
-            lba % SECTOR_SIZE == 0
-        ), "lba is not multiple of sector size {}%{}".format(lba, SECTOR_SIZE)
+        # align lba to block size to BLOCK_SIZE
+        lba = lba - (lba % BLOCK_SIZE)
 
         for i in range(int(ceil(req_size / BLOCK_SIZE))):
             ofile.write(
@@ -118,29 +105,31 @@ def preprocess(ifilepath, ofilepath=None):
 
 def convert(traceConv_path, ifilepath, ofilepath=None):
     if not ofilepath:
-        ofilepath = ifilepath.replace(".pre_lcs", "") + ".lcs"
+        ofilepath = ifilepath.replace(".pre_lcs", ".lcs")
     p = subprocess.run(
-        f'{traceConv_path} {ifilepath} csv -t "time-col=1,obj-id-col=2,obj-size-col=3,op-col=4" -o {ofilepath}',
+        f'{traceConv_path} {ifilepath} csv -t "time-col=1,obj-id-col=2,obj-size-col=3,op-col=4,obj-id-is-num=1" -o {ofilepath} --output-format lcs_v2',
         shell=True,
     )
-    print(p.returncode)
-    print(p.stdout.decode())
-    print(p.stderr.decode())
-    print(f"Converted trace is saved to {ofilepath}")
+    if p.returncode == 0:
+        print(f"Converted trace is saved to {ofilepath}")
 
 
 if __name__ == "__main__":
+    from utils import post_process
+    DEFAULT_TRACECONV_PATH = BASEPATH + "/_build/bin/traceConv"
+
     if len(sys.argv) < 2:
         print("Usage: {} <trace file>".format(sys.argv[0]))
         sys.exit(1)
 
     ifilepath = sys.argv[1]
+    traceConv_path = os.environ.get("TRACECONV_PATH", DEFAULT_TRACECONV_PATH)
+
     try:
-        preprocess(ifilepath)
+        preprocess(ifilepath, ifilepath + ".pre_lcs")
+        convert(traceConv_path, ifilepath + ".pre_lcs", ofilepath=ifilepath + ".lcs")
+        post_process(ifilepath)
     except Exception as e:
-        os.remove(ifilepath + ".pre_lcs")
         print(e)
         with open(ifilepath + ".fail", "w") as f:
             f.write(str(e))
-
-    # convert(BASEPATH + "/_build/bin/traceConv", ifilepath)

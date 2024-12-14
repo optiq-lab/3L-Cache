@@ -159,7 +159,7 @@ def parse_stat(b, print_stat=True):
         print()
 
 
-def read_header(ifile):
+def read_header(ifile, print_stat=True):
     header = ifile.read(LCS_HEADER_SIZE)
     start_magic, version = struct.unpack("<QQ", header[:16])
     end_magic = struct.unpack("<Q", header[-8:])[0]
@@ -168,7 +168,7 @@ def read_header(ifile):
     if end_magic != LCS_END_MAGIC:
         raise RuntimeError(f"Invalid trace file end magic {end_magic:016x}")
 
-    parse_stat(header[16:-176], print_stat=True)
+    parse_stat(header[16:-176], print_stat=print_stat)
 
     return version
 
@@ -176,12 +176,13 @@ def read_header(ifile):
 def read_trace(ifilepath, n_max_req=-1):
     if ifilepath.endswith(".zst"):
         import zstandard as zstd
+
         decompressor = zstd.ZstdDecompressor()
         reader = decompressor.stream_reader(open(ifilepath, "rb"))
-    else:            
+    else:
         ifile = open(ifilepath, "rb")
         reader = ifile
-        
+
     version = read_header(reader)
     s = [
         struct.Struct("<IQIq"),
@@ -204,6 +205,37 @@ def read_trace(ifilepath, n_max_req=-1):
     reader.close()
 
 
+def test_block_trace(ifilepath):
+    if ifilepath.endswith(".zst"):
+        import zstandard as zstd
+
+        decompressor = zstd.ZstdDecompressor()
+        reader = decompressor.stream_reader(open(ifilepath, "rb"))
+    else:
+        ifile = open(ifilepath, "rb")
+        reader = ifile
+
+    version = read_header(reader, print_stat=False)
+    s = [
+        struct.Struct("<IQIq"),
+        struct.Struct("<IQIIq"),
+        struct.Struct("<qQqIq"),
+    ][version - 1]
+
+    while True:
+        b = reader.read(s.size)
+        if not b:
+            break
+        req = s.unpack(b)
+        if req[1] % 4096 != 0:
+            raise RuntimeError(
+                f"lba is not multiple of block size {req[1]} % 4096 = {req[1] % 4096} {ifilepath}"
+            )
+
+    reader.close()
+    print(f"LBA test passed {ifilepath}")
+
+
 if __name__ == "__main__":
     import sys
 
@@ -211,4 +243,5 @@ if __name__ == "__main__":
         print(f"Usage: {sys.argv[0]} /path/trace [n_req]")
         sys.exit(1)
 
-    read_trace(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else -1)
+    test_block_trace(sys.argv[1])
+    # read_trace(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else -1)
