@@ -379,10 +379,12 @@ def convert(
             csv_format += f"|{i+7}"
 
     command = f'{traceconv_path} {ifilepath} csv -t "{csv_format}" -o {ofilepath}'
-    if n_feature > 0:
+    if n_feature == 0:
+        command += " --output-format=lcs_v3"
+    else:
         assert n_feature == 1, "only support 1 features"
         command += " --output-format=lcs_v4"
-
+    
     print(command)
     p = subprocess.run(
         command,

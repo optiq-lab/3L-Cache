@@ -56,8 +56,6 @@
 
 # typedef struct __attribute__((packed)) lcs_req_v1 {
 #   uint32_t clock_time;
-#   // this is the hash of key in key-value cache
-#   // or the logical block address in block cache
 #   uint64_t obj_id;
 #   uint32_t obj_size;
 #   int64_t next_access_vtime;
@@ -212,7 +210,7 @@ def parse_stat(b, print_stat=True):
             )
         print("....")
 
-        print(f"highest_freq: {highest_freq}, skewness: {skewness:.4f}")
+        print(f"highest_freq: {highest_freq[:N_MOST_COMMON_PRINT]}, skewness: {skewness:.4f}")
         print(f"most_common_freq: ", end="")
         for i in range(N_MOST_COMMON_PRINT):
             if most_common_freq_ratio[i] == 0:
@@ -278,7 +276,9 @@ def print_trace(ifilepath, n_max_req=-1, print_stat=True, print_header=True):
         req = s.unpack(b)
         ts, obj, size = req[:3]
         print(f"{ts},{obj},{size}", end="")
-        if version == 2:
+        if version == 1:
+            next_access_vtime = req[3]
+        elif version == 2:
             op = OP_NAMES[req[3] & 0xFF]
             tenant = (req[3]>>8) & 0xFFFFFF
             next_access_vtime = req[4]
