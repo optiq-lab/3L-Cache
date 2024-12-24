@@ -327,7 +327,7 @@ if(ENABLE_LRB)
 endif(ENABLE_LRB)
 
 file(GLOB TLCache_source
-        ../3LCache/*.cpp)
+        ./3LCache/*.cpp)
 set (cache_source
         ${cache_source} ${TLCache_source}
 )
