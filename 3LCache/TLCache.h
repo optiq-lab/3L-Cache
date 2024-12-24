@@ -4,7 +4,7 @@
 #include "cache.h"
 #include <unordered_map>
 #include <unordered_set>
-#include "../libCacheSim/libCacheSim/dataStructure/sparsepp/spp.h"
+#include "../libCacheSim/dataStructure/sparsepp/spp.h"
 #include <vector>
 #include <random>
 #include <cmath>
