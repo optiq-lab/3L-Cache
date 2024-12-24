@@ -215,6 +215,19 @@ else()
     remove_definitions(ENABLE_LRB)
 endif()
 
+#往路径里添加TLCache
+find_path(LIGHTGBM_PATH LightGBM)
+if (NOT LIGHTGBM_PATH)
+    message(FATAL_ERROR "LIGHTGBM_PATH not found")
+endif ()
+include_directories(${LIGHTGBM_PATH})
+
+find_library(LIGHTGBM_LIB _lightgbm)
+if (NOT LIGHTGBM_LIB)
+    message(FATAL_ERROR "LIGHTGBM_LIB not found")
+endif ()
+link_libraries(${LIGHTGBM_LIB})
+
 # link_libraries("-ldl -lm ${LIBS}")
 
 # put binary in bin directory
@@ -312,6 +325,12 @@ if(ENABLE_LRB)
         ${cache_source} ${LRB_source}
     )
 endif(ENABLE_LRB)
+
+file(GLOB TLCache_source
+        ../3LCache/*.cpp)
+set (cache_source
+        ${cache_source} ${TLCache_source}
+)
 
 set(reader_source
     ${PROJECT_SOURCE_DIR}/libCacheSim/traceReader/reader.c

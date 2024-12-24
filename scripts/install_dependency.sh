@@ -1,99 +1,71 @@
 #!/bin/bash 
 
-set -eu # Enable error checking and command tracing
-
 setup_ubuntu() {
 	sudo apt update
-	sudo apt install -yqq build-essential google-perftools xxhash
-	
-	sudo apt install -yqq libglib2.0-dev libunwind-dev
-	sudo apt install -yqq libgoogle-perftools-dev
+	sudo apt install -yqq libglib2.0-dev libgoogle-perftools-dev build-essential cmake google-perftools
 }
 
 setup_centos() {
-	sudo yum install -y glib2-devel google-perftools-devel
+	sudo yum install glib2-devel google-perftools-devel
 }
 
 setup_macOS() {
-	brew install glib google-perftools argp-standalone xxhash
+	brew install glib google-perftools
 }
 
-install_cmake() {
-	pushd /tmp/;
-	wget https://github.com/Kitware/CMake/releases/download/v3.31.0/cmake-3.31.0-linux-x86_64.sh;
-	mkdir -p $HOME/software/cmake 2>/dev/null || true;
-	bash cmake-3.31.0-linux-x86_64.sh --skip-license --prefix=$HOME/software/cmake;
-	echo 'export PATH=$HOME/software/cmake/bin:$PATH' >> $HOME/.bashrc;
-	echo 'export PATH=$HOME/software/cmake/bin:$PATH' >> $HOME/.zshrc;
-	source $HOME/.bashrc;
-	source $HOME/.zshrc;
-	popd;
-}
-
-install_xgboost() {
+setup_xgboost() {
     pushd /tmp/
-	if [ ! -d "xgboost" ]; then
-		git clone --recursive https://github.com/dmlc/xgboost
-	fi
+	# git clone --recursive https://github.com/dmlc/xgboost
+	git clone --recursive --branch v2.0.0 https://github.com/dmlc/xgboost.git
 	pushd xgboost
-	mkdir build || true
+	mkdir build
 	pushd build
 	cmake ..
-	if [[ ${GITHUB_ACTIONS:-} == "true" ]]; then
+	if [[ $GITHUB_ACTIONS == "true" ]]; then
 		make
 	else
-		make -j $(nproc)
+		make -j
 	fi
 	sudo make install
 }
 
-install_lightgbm() {
+
+
+
+setup_zstd() {
     pushd /tmp/
-	if [ ! -d "LightGBM" ]; then
-		git clone --recursive https://github.com/microsoft/LightGBM
-	fi
-	pushd LightGBM
-	mkdir build || true
-	pushd build
-	cmake ..
-	if [[ ${GITHUB_ACTIONS:-} == "true" ]]; then
-		make
-	else
-		make -j $(nproc)
-	fi
-	sudo make install
-}
-
-install_zstd() {
-    pushd /tmp/;
-	if [ ! -f "zstd-1.5.0.tar.gz" ]; then 
-	    wget https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-1.5.0.tar.gz
-	    tar xvf zstd-1.5.0.tar.gz;
-	fi
+    wget https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-1.5.0.tar.gz
+    tar xvf zstd-1.5.0.tar.gz;
     pushd zstd-1.5.0/build/cmake/
-    mkdir _build || true
+    mkdir _build;
     pushd _build/;
     cmake ..
-    make -j $(nproc)
+    make -j
     sudo make install
 }
 
+
 CURR_DIR=$(pwd)
 
-if [ -n "$(uname -a | grep Ubuntu)" ] || [ -n "$(uname -a | grep Debian)" ] || [ -n "$(uname -a | grep WSL)" ]; then
-    setup_ubuntu
-elif [ -n "$(uname -a | grep Darwin)" ]; then
-    setup_macOS
+# install LightGBM
+cd ./LightGBM/build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
+sudo make install
+cd ../..
+
+if [  -n "$(uname -a | grep Ubuntu)" ]; then
+	setup_ubuntu
+elif [  -n "$(uname -a | grep Darwin)" ]; then
+	setup_macOS
 else
-    setup_centos
-fi 
+	setup_centos
+fi  
 
-install_cmake
-install_zstd
-
-if [[ ! ${GITHUB_ACTIONS:-} == "true" ]]; then
-	install_xgboost
-	install_lightgbm
+if [[ ! $GITHUB_ACTIONS == "true" ]]; then
+	setup_xgboost
+	# setup_lightgbm
 fi
+setup_zstd
 
 cd $CURR_DIR

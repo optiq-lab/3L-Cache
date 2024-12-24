@@ -89,6 +89,11 @@ if (ENABLE_LRB)
         )
 endif()
 
+set (sourceCPP ${sourceCPP} 
+    ../../../3LCache/TLCache.cpp
+    ../../../3LCache/TLCache_Interface.cpp
+)
+
 if (ENABLE_GLCACHE)
     set(sourceC 
         ${sourceC} 
