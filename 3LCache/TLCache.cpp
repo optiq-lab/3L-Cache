@@ -190,7 +190,7 @@ uint32_t TLCacheCache::rank() {
         sample_rate = initial_queue_length > 2 ? initial_queue_length * 0.01 + eviction_rate : 1;
     // 新对象的采样
     sampled_objects = quick_demotion();
-
+    // 防止出现特定工作负载下，新对象比例异常的问题，如果新对象的占比高出预设比例一个量级，则优先暂时不进行定向重置采样
     if (new_obj_size < _currentSize * reserved_space / 10) {
         unsigned int idx_row = 0;
         uint16_t freq = 0;
