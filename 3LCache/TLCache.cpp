@@ -263,16 +263,19 @@ vector<uint32_t> TLCacheCache::quick_demotion() {
     vector<uint32_t> sampled_objects;
     int i, j = 0;
     while (new_obj_size > _currentSize * reserved_space / 100  && j < sample_rate * 1.5 && i < new_obj_keys.size()) {
-        auto it = key_map.find(new_obj_keys[i])->second;
-        if (it.list_idx == 0) {
-            new_obj_size -= in_cache.metas[it.list_pos]._size;
-            sampled_objects.emplace_back(it.list_pos);
-            j++;
-        } else {
-            new_obj_size -= out_cache.metas[it.list_pos - out_cache.front_index]._size;
+        auto it = key_map.find(new_obj_keys[i]);
+        if (it != key_map.end()) {
+            if (it->second.list_idx == 0) {
+                new_obj_size -= in_cache.metas[it->second.list_pos]._size;
+                sampled_objects.emplace_back(it->second.list_pos);
+                j++;
+            } else {
+                new_obj_size -= out_cache.metas[it->second.list_pos - out_cache.front_index]._size;
+            }
         }
         i++;
     }
+
     new_obj_keys.erase(new_obj_keys.begin(), new_obj_keys.begin() + i);
     if (new_obj_keys.size() == 0)
         new_obj_size = 0;
