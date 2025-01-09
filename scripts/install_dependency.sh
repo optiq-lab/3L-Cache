@@ -48,6 +48,7 @@ setup_zstd() {
 CURR_DIR=$(pwd)
 
 # install LightGBM
+mkdir -p ./LightGBM/build
 cd ./LightGBM/build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make
