@@ -49,22 +49,24 @@ After building and installing, cachesim should be in the _build/bin/ directory.
 
 ## Run a single cache simulation
 ```bash
-~/libCacheSim/_build/bin/cachesim /path/to/tencentBlock_ns3964.csv csv 3lcache 1347453593  -t -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
+/path/to/cachesim /path/to/tencentBlock_ns3964.csv csv 3lcache 1347453593  -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
 ```
 
 ## Run multiple cache simulations
 ```bash
-~/libCacheSim/_build/bin/cachesim /path/to/tencentBlock_ns3964.csv csv 3lcache 1347453593,13474535  -t -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
+/path/to/cachesim /path/to/tencentBlock_ns3964.csv csv 3lcache 1347453593,13474535 -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
 ```
 
 ## Examples
 ```bash
+# unzip a trace
+unzip ~/3L-Cache/data/tencentBlock_ns3964.zip
 
-/path/to/cachesim /data/csv/tencentBlock_ns3964.csv csv 3lcache-omr 1347453593 -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
+~/3L-Cache/_build/bin/cachesim ~/3L-Cache/data/tencentBlock_ns3964.csv csv 3lcache-omr 1347453593 -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
 # Output object miss ratio
 tencentBlock_ns3964.csv TLCache-OMR cache size     1GiB,         13625211 req, miss ratio 0.3380, throughput 0.59 MQPS
 
-~/libCacheSim/_build/bin/cachesim /path/to/tencentBlock_ns3964.csv csv 3lcache 1347453593,13474535  -t -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
+~/3L-Cache/_build/bin/cachesim ~/3L-Cache/data/tencentBlock_ns3964.csv csv 3lcache 1347453593,13474535 -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
 #Output object miss ratio and byte miss ratio
 result/tencentBlock_ns3964.csv                      TLCache-BMR cache size        1GiB, 13625211 req, miss ratio 0.3421, byte miss ratio 0.1034
 result/tencentBlock_ns3964.csv                      TLCache-BMR cache size        0GiB, 13625211 req, miss ratio 0.5300, byte miss ratio 0.6377
