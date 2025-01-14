@@ -247,6 +247,6 @@ if __name__ == "__main__":
         print(df)
         draw_box_plot(xlabels[i], ylabel, algorithms, df, fontsize=40)
         if i == 0:
-            plt.savefig(f'./figures/{args.metric}_small_cache_size.pdf', format='pdf', dpi=900, bbox_inches='tight')
+            plt.savefig(f'./figures/{args.metric}_for_small_cache_size.pdf', format='pdf', dpi=900, bbox_inches='tight')
         else:
-            plt.savefig(f'./figures/{args.metric}_large_cache_size.pdf', format='pdf', dpi=900, bbox_inches='tight')
+            plt.savefig(f'./figures/{args.metric}_for_large_cache_size.pdf', format='pdf', dpi=900, bbox_inches='tight')
