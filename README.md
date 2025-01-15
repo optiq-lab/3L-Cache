@@ -78,9 +78,9 @@ result/tencentBlock_ns3964.csv                      TLCache-BMR cache size      
 # <dataset_path>  is the path of the dataset; <dataset_info> is a dictionary that records the number of unique bytes for different traces; <algo> is a list containing the caching strategies that need to be measured; <metric> only includes object miss ratio(omr) and byte miss ratio(bmr).
 
 cd 3L-Cache/scripts
-python3 miss_ratio_box_plot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo> --metric=<metric>
+python3 miss_ratio_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo> --metric=<metric>
 
-python3 cpu_overhead_box_plot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo>
+python3 cpu_overhead_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo>
 
 # This instruction will retrieve the trace under <dataset-path> and conduct experiments to measure the miss ratio. The generated experimental results are kept in 3LCache/scripts/result, and corresponding boxplots are generated in the figures folder.
 
@@ -88,5 +88,5 @@ python3 miss_ratio_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cach
 
 # This instruction will retrieve the trace under <dataset-path> and conduct experiments to measure the cpu overhead. The generated experimental results are kept in 3LCache/scripts/, and corresponding boxplots are generated in the figures folder.
 
-python3 miss_ratio_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt"
+python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt"
 '''
