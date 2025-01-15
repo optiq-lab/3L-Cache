@@ -224,9 +224,8 @@ if __name__ == "__main__":
         if benchmark_algo not in algorithms:
             algorithms.append(benchmark_algo)
         results = get_overhead_result(file_list, small_cache_sizes, algorithms)
-        print(results)
         df = pd.DataFrame(results[1:], columns=results[0])
-        draw_box_plot(xlabels, ylabel, algorithms, df, fontsize=40)
+        draw_box_plot(xlabels[i], ylabel, algorithms, df, fontsize=40)
         if i == 0:
             plt.savefig(f'./figures/cpu_overhead_for_small_cache_size.pdf', format='pdf', dpi=900, bbox_inches='tight')
         else:
