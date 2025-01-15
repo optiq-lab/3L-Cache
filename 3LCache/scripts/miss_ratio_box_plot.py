@@ -84,13 +84,13 @@ def lib_command_executor(command):
     except:
         print('错误', command)
 
-def get_cache_size(trace_path, trace_info):
+def get_cache_size(dataset_path, dataset_info):
     file_list = []
     csizes = []
-    for file in os.listdir(trace_path):
+    for file in os.listdir(dataset_path):
         file = file.replace('_', '.')
-        if not os.path.isdir(os.path.join(trace_path, file)) and file in trace_info.keys():
-            csizes.append([math.ceil(trace_info[file] * 0.001), math.ceil(trace_info[file] * 0.1)])
+        if not os.path.isdir(os.path.join(dataset_path, file)) and file in dataset_info.keys():
+            csizes.append([math.ceil(dataset_info[file] * 0.001), math.ceil(dataset_info[file] * 0.1)])
             file_list.append(file)
     return csizes, file_list
 
@@ -167,28 +167,28 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Parse command-line arguments.")
     # 添加参数，设置默认值
     parser.add_argument('--algo', type=str, default="", help="The algorithm to use, default is ['FIFO','LRU','sieve'].")
-    parser.add_argument('--trace_path', type=str, default="", help="The storage path of trace.")
-    parser.add_argument('--trace_info', type=str, default="")
+    parser.add_argument('--dataset_path', type=str, default="", help="The storage path of trace.")
+    parser.add_argument('--dataset_info', type=str, default="")
     parser.add_argument('--metric', type=str, default="bmr", help="The default is bmr.")
     args = parser.parse_args()
 
-    if args.trace_info == "":
-        trace_info_path = './trace_info.txt'
+    if args.dataset_info == "":
+        dataset_info_path = './dataset_info.txt'
     else:
-        dataset_path = args.trace_info
-    if args.trace_path == "":
+        dataset_info_path = args.dataset_info
+    if args.dataset_path == "":
         dataset_path = '../../data/'
     else:
-        dataset_path = args.trace_path
+        dataset_path = args.dataset_path
     if args.algo == "":
         cache_strategy = ['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']
     else:
         cache_strategy = eval(args.algo)
     # print(cache_strategy)
-    with open(trace_info_path, "r") as file:
-        trace_info = json.loads(file.read())
+    with open(dataset_info_path, "r") as file:
+        dataset_info = json.loads(file.read())
     
-    csizes, file_list = get_cache_size(dataset_path, trace_info)
+    csizes, file_list = get_cache_size(dataset_path, dataset_info)
     
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
