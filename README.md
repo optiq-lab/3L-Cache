@@ -28,7 +28,7 @@ cd scripts && bash install_dependency.sh && bash install_libcachesim.sh
 ## Usage
 After building and installing, cachesim should be in the _build/bin/ directory.
 ```bash
-~/libCacheSim/_build/bin/cachesim trace_path trace_type eviction_algo cache_size [OPTION...]
+~/3L-Cache/_build/bin/cachesim trace_path trace_type eviction_algo cache_size [OPTION...]
 ```
 
 ## Traces
@@ -78,6 +78,7 @@ result/tencentBlock_ns3964.csv                      TLCache-BMR cache size      
 # <dataset_path>  is the path of the dataset; <dataset_info> is a dictionary that records the number of unique bytes for different traces; <algo> is a list containing the caching strategies that need to be measured; <metric> only includes object miss ratio(omr) and byte miss ratio(bmr).
 
 cd 3L-Cache/scripts
+
 python3 miss_ratio_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo> --metric=<metric>
 
 python3 cpu_overhead_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo>
