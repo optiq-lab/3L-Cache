@@ -1,0 +1,3 @@
+python3 executor_libcachesim.py
+python3 libcachesim_result_collect.py
+python3 draw_figure.py

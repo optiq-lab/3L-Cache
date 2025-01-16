@@ -173,7 +173,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.dataset_info == "":
-        dataset_info_path = './dataset_info.txt'
+        dataset_info_path = './trace_info/dataset_info.txt'
     else:
         dataset_info_path = args.dataset_info
     if args.dataset_path == "":

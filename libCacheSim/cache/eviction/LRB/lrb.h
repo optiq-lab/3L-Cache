@@ -299,7 +299,7 @@ public:
     BoosterHandle booster = nullptr;
 
     unordered_map<string, string> training_params = {
-            //don't use alias here. C api may not recognize
+            //don't use alias here. C api may not recongize
             {"boosting",         "gbdt"},
             {"objective",        "regression"},
             {"num_iterations",   "32"},

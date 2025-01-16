@@ -7,6 +7,7 @@
 #include "utils.h"
 #include <chrono>
 
+
 using namespace chrono;
 using namespace std;
 using namespace lrb;
@@ -26,7 +27,8 @@ void LRBCache::train() {
             training_data->indptr.size(),
             training_data->data.size(),
             n_feature,  //remove future t
-            map_to_string(training_params).c_str(),
+            // map_to_string(training_params).c_str(),
+            training_params,
             nullptr,
             &trainData);
 
@@ -37,7 +39,8 @@ void LRBCache::train() {
                          C_API_DTYPE_FLOAT32);
 
     // init booster
-    LGBM_BoosterCreate(trainData, map_to_string(training_params).c_str(), &booster);
+    // map_to_string(training_params).c_str(),
+    LGBM_BoosterCreate(trainData, training_params, &booster);
     // train
     for (int i = 0; i < stoi(training_params["num_iterations"]); i++) {
         int isFinished;
@@ -60,8 +63,11 @@ void LRBCache::train() {
                               n_feature,  //remove future t
                               C_API_PREDICT_NORMAL,
                               0,
-                              atoi(training_params["num_iterations"].c_str()),
-                              map_to_string(training_params).c_str(),
+                            //   atoi(training_params["num_iterations"].c_str()),
+                            //   atoi(training_params["num_iterations"]),
+                            //   map_to_string(training_params).c_str(),
+                            //   training_params["num_iterations"],
+                              training_params,
                               &len,
                               result.data());
 
@@ -77,6 +83,7 @@ void LRBCache::train() {
     training_time = 0.95 * training_time +
                     0.05 * chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - timeBegin).count();
 }
+
 
 void LRBCache::sample() {
     // start sampling once cache filled up
@@ -373,8 +380,10 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
                               n_feature,  //remove future t
                               C_API_PREDICT_NORMAL,
                               0,
-                              atoi(training_params["num_iterations"].c_str()),
-                              map_to_string(inference_params).c_str(),
+                            //   atoi(training_params["num_iterations"].c_str()),
+                            //   map_to_string(inference_params).c_str(),
+                            //   32,
+                              training_params,
                               &len,
                               scores);
     if (!(current_seq % 10000))

@@ -85,7 +85,7 @@ def get_cache_size(dataset_path, dataset_info):
 def two_decimal_places(x, pos):
     return f'{x:.2f}'
 
-def draw_box_plot(xlabels, ylabels, algorithms, df, fontsize=40):
+def draw_box_plot(algorithms, df, ax1, ax2, cnt, fontsize=40):
     while benchmark_algo in algorithms:
         algorithms.remove(benchmark_algo)
     key_map={}
@@ -109,41 +109,37 @@ def draw_box_plot(xlabels, ylabels, algorithms, df, fontsize=40):
     mpl.rcParams['font.size'] = fontsize
     x = [i for i in range(1, 1 + len(algorithms))]
     baseline = df[benchmark_algo].to_numpy().reshape(-1, 1)
-    
-    y = []
+    increase_over_baseline = []
+    algo_mean = []
     for algo in algorithms:
         positions = df.index[df[algo] != -1].tolist()
-        columns_data = df[algo].to_numpy().reshape(-1, 1)
-        columns_data = columns_data / baseline
-        y.append(columns_data[positions].reshape(-1,).tolist())
-    plt.boxplot(y, showfliers=False, whis=(10, 90))
-    mean_filtered_values = []
-    for col in y:
-        mean_filtered_values.append(sum(col)/len(col))
-    plt.scatter(x, mean_filtered_values, marker='v', s=100, color='#EF949E', edgecolor='#C81D31')
-    plt.ylabel(ylabels)
-    flattened_data = [item for sublist in y for item in sublist]
-    y = np.array(flattened_data)
-    p25 = np.percentile(y, 10)
-    p25 = int(p25 * 100) / 100
-    pmax = np.percentile(y, 90)
-    if  pmax - p25 < 0.06:
-        plt.gca().yaxis.set_major_locator(MultipleLocator(0.01))  # 自动调整刻度
-    elif pmax - p25 < 0.3:
-        plt.gca().yaxis.set_major_locator(MultipleLocator(0.05))  # 自动调整刻度
-    elif pmax - p25 < 0.7:
-        plt.gca().yaxis.set_major_locator(MultipleLocator(0.1))  # 自动调整刻度
+        y = baseline / df[algo].to_numpy()
+        y = y[positions]
+        increase_over_baseline.append(y.reshape(-1,).tolist())
+        algo_mean.append(sum(increase_over_baseline[-1]) / len(increase_over_baseline[-1]))
+    ax1[cnt].scatter(x, algo_mean, marker='v', s=50, color='#EF949E', edgecolor='#C81D31')
+    ax2[cnt].scatter(x, algo_mean, marker='v', s=50, color='#EF949E', edgecolor='#C81D31')
+    ax1[cnt].boxplot(increase_over_baseline, showfliers=False, whis=(10, 90))
+    ax2[cnt].boxplot(increase_over_baseline, showfliers=False, whis=(10, 90))
+    if cnt == 1:
+        ax2[1].set_xlabel('(b) Large cache size', fontsize = 44)
     else:
-        plt.gca().yaxis.set_major_locator(MultipleLocator(0.1))  # 自动调整刻度
-    
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(two_decimal_places))
+        ax2[1].set_xlabel('(a) Small cache size', fontsize = 44)
+    ax2[cnt].set_ylabel(f'CPU overhead relative to {benchmark_algo}')
+    # plt.yticks([i * 2 for i in range(0, 6)])
     xticks = [key_map[algo] for algo in algorithms]
-    plt.xticks([i + 1 for i in range(len(algorithms))], xticks, fontsize=int(fontsize * 0.95))
-    plt.xlabel(xlabels, fontsize=int(fontsize*1.05))
-    plt.gca().set_xticklabels(xticks, rotation=45)
-    plt.grid(True, linestyle='--')
+    ax2[cnt].set_xticks([i for i in range(1, len(algorithms) + 1)], xticks)
+    ax2[cnt].set_ylim(0, 10)
+    ax1[cnt].set_ylim(10, 300)
+    ax2[cnt].set_xticklabels(xticks, rotation=45)
+    ax1[cnt].grid(True, linestyle='--')
+    ax2[cnt].grid(True, linestyle='--')
 
-    plt.ylim(p25)
+    ax2[1].yaxis.set_label_coords(-0.08, 0.8)
+    ax2[0].yaxis.set_label_coords(-0.08, 0.8)
+    plt.tight_layout()
+    plt.subplots_adjust(hspace=0.1)
+
 import argparse
 if __name__ == "__main__":
     file_path = os.path.abspath('../../')
@@ -158,7 +154,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.dataset_info == "":
-        dataset_info_path = './dataset_info.txt'
+        dataset_info_path = './trace_info/dataset_info.txt'
     else:
         dataset_info_path = args.dataset_info
     if args.dataset_path == "":
@@ -217,16 +213,13 @@ if __name__ == "__main__":
         small_cache_sizes.append(cs[0])
         large_cache_sizes.append(cs[1])
 
-    plt.figure(figsize=(16, 9))
     xlabels = ['Small cache size', 'Large cache size']
     ylabel = 'CPU overhead relative to LRU'
+    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=2, sharex=True, gridspec_kw={'height_ratios': [1, 2]}, figsize=(16*2, 12))
     for i, xlabel in enumerate(xlabels):
         if benchmark_algo not in algorithms:
             algorithms.append(benchmark_algo)
         results = get_overhead_result(file_list, small_cache_sizes, algorithms)
         df = pd.DataFrame(results[1:], columns=results[0])
-        draw_box_plot(xlabels[i], ylabel, algorithms, df, fontsize=40)
-        if i == 0:
-            plt.savefig(f'./figures/cpu_overhead_for_small_cache_size.pdf', format='pdf', dpi=900, bbox_inches='tight')
-        else:
-            plt.savefig(f'./figures/cpu_overhead_for_large_cache_size.pdf', format='pdf', dpi=900, bbox_inches='tight')
+        draw_box_plot(algorithms, df, ax1, ax2, i, fontsize=40)
+    plt.savefig(f'./figures/cpu_overhead.pdf', format='pdf', dpi=900, bbox_inches='tight')
