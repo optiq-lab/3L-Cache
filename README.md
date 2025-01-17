@@ -79,16 +79,21 @@ result/tencentBlock_ns3964.csv                      TLCache-BMR cache size      
 
 cd 3L-Cache/3LCache/scripts
 
-# This instruction will retrieve the trace under <dataset-path> and conduct experiments to measure the miss ratio. The generated experimental results are kept in 3LCache/scripts/result, and corresponding boxplots are generated in the figures folder.
+# This command will retrieve the trace under <dataset-path> and conduct experiments to measure the miss ratio.
+# The generated experimental results are kept in 3LCache/scripts/result, and corresponding boxplots are generated in the figures folder.
 python3 miss_ratio_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo> --metric=<metric>
 # Example
 python3 miss_ratio_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt" --metric="bmr"
 
-# This instruction will retrieve the trace under <dataset-path> and conduct experiments to measure the cpu overhead. The generated experimental results are kept in 3LCache/scripts/, and corresponding boxplots are generated in the figures folder.
+# This command will retrieve the trace under <dataset-path> and conduct experiments to measure the cpu overhead.
+# The generated experimental results are kept in 3LCache/scripts/, and corresponding boxplots are generated in the figures folder.
 python3 cpu_overhead_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo>
 # Example
 python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt"
 
-#This script will conduct experiments on the trace at the specified path(We have provided some trace samples in the data folder) and generate experimental result figures in the figures folder: a byte miss rate result figure (bmr.pdf) corresponding to Figure 6 in the paper, an object miss rate result figure (omr.pdf) corresponding to Figure 8 in the paper and a computational overhead result figure (cpu_overhead.pdf) corresponding to Figure 10 in the paper. 
+# This script help conduct experiments on the trace at the specified path
+# (We have provided some trace samples in the data folder)
+# and generate experimental result figures in the figures folder: a byte miss rate result figure (bmr.pdf) corresponding to Figure 6 in the paper, an object miss rate result figure (omr.pdf) corresponding to Figure 8
+# in the paper and a computational overhead result figure (cpu_overhead.pdf) corresponding to Figure 10 in the paper. 
 ./run_scripts.sh
 ```
