@@ -159,12 +159,12 @@ def mr_result(cache_algorthms):
                 dataset = json.loads(file.read())
             csizes, file_list = get_cache_size(dataset, trace_info, 0.001)
             algo_performance = get_mr_result(file_list, csizes, cache_algorthms, metric)
-            write_to_excel(algo_performance, f'{trace_path}_{name}bmr_1000.xlsx')
+            write_to_excel(algo_performance, f'{trace_path}_{name}{metric}_1000.xlsx')
 
             
             csizes, file_list = get_cache_size(dataset, trace_info, 0.1)
             algo_performance = get_mr_result(file_list, csizes, cache_algorthms, metric)
-            write_to_excel(algo_performance, f'{trace_path}_{name}bmr_10.xlsx')
+            write_to_excel(algo_performance, f'{trace_path}_{name}{metric}_10.xlsx')
 
 def tp_result(cache_algorthms):
     trace_info = get_trace_info()
