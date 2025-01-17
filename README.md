@@ -81,7 +81,6 @@ cd 3L-Cache/3LCache/scripts
 
 # This instruction will retrieve the trace under <dataset-path> and conduct experiments to measure the miss ratio. The generated experimental results are kept in 3LCache/scripts/result, and corresponding boxplots are generated in the figures folder.
 python3 miss_ratio_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo> --metric=<metric>
-
 # example
 python3 miss_ratio_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt" --metric="bmr"
 
