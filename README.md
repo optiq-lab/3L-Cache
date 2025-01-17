@@ -91,9 +91,7 @@ python3 cpu_overhead_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<d
 # Example
 python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt"
 
-# This script help conduct experiments on the trace at the specified path
-# (We have provided some trace samples in the data folder)
-# and generate experimental result figures in the figures folder: a byte miss rate result figure (bmr.pdf) corresponding to Figure 6 in the paper, an object miss rate result figure (omr.pdf) corresponding to Figure 8
-# in the paper and a computational overhead result figure (cpu_overhead.pdf) corresponding to Figure 10 in the paper. 
+# This script help conduct experiments on the sample traces at the specified path.
+# The key figures (Figure 6, Figure 8, and 10) can be generated via this script with our sample traces.
 ./run_scripts.sh
 ```
