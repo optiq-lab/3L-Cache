@@ -91,7 +91,8 @@ python3 cpu_overhead_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<d
 # Example
 python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt"
 
-# This script help conduct experiments on the sample traces at the specified path.
-# The key figures (Figure 6, Figure 8, and 10) can be generated via this script with our sample traces.
+# This script helps conduct experiments with sample traces directly to show the code is functional.
+# The key figures (Figure 6, Figure 8, and 10) can be generated via this script with real traces or sample traces.
+
 ./run_scripts.sh
 ```
