@@ -148,22 +148,23 @@ def write_to_excel(arr, filename):
 
 import pandas as pd
 
-def bmr_result(cache_algorthms):
+def mr_result(cache_algorthms):
     trace_info = get_trace_info()
     trace_paths = ['alibaba', 'twitter', 'cloudphysics', 'tencentblock']
     name = ''
-    for trace_path in trace_paths:
-        dataset_path = f"{current_path}/trace_info/{trace_path}_info.txt"
-        with open(dataset_path, "r") as file:
-            dataset = json.loads(file.read())
-        csizes, file_list = get_cache_size(dataset, trace_info, 0.001)
-        algo_performance = get_mr_result(file_list, csizes, cache_algorthms, 'bmr')
-        write_to_excel(algo_performance, f'{trace_path}_{name}bmr_1000.xlsx')
+    for metric in ['bmr', 'omr']:
+        for trace_path in trace_paths:
+            dataset_path = f"{current_path}/trace_info/{trace_path}_info.txt"
+            with open(dataset_path, "r") as file:
+                dataset = json.loads(file.read())
+            csizes, file_list = get_cache_size(dataset, trace_info, 0.001)
+            algo_performance = get_mr_result(file_list, csizes, cache_algorthms, metric)
+            write_to_excel(algo_performance, f'{trace_path}_{name}bmr_1000.xlsx')
 
-        
-        csizes, file_list = get_cache_size(dataset, trace_info, 0.1)
-        algo_performance = get_mr_result(file_list, csizes, cache_algorthms, 'bmr')
-        write_to_excel(algo_performance, f'{trace_path}_{name}bmr_10.xlsx')
+            
+            csizes, file_list = get_cache_size(dataset, trace_info, 0.1)
+            algo_performance = get_mr_result(file_list, csizes, cache_algorthms, metric)
+            write_to_excel(algo_performance, f'{trace_path}_{name}bmr_10.xlsx')
 
 def tp_result(cache_algorthms):
     trace_info = get_trace_info()
@@ -189,5 +190,5 @@ def tp_result(cache_algorthms):
 
 if __name__ == "__main__":
     cache_algorthms = ['Trace', 'Cache Size', 'Trace Size', 'LHD', 'GDSF', 'ARC', 'Sieve', 'S3FIFO-0.1000-2', 'WTinyLFU-w0.01-SLRU', 'LeCaR', 'Cacheus', 'TLCache-BMR', 'LRU']
-    bmr_result(cache_algorthms)
+    mr_result(cache_algorthms)
     tp_result(cache_algorthms)

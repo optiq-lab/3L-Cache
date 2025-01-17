@@ -89,6 +89,6 @@ python3 miss_ratio_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cach
 # This instruction will retrieve the trace under <dataset-path> and conduct experiments to measure the cpu overhead. The generated experimental results are kept in 3LCache/scripts/, and corresponding boxplots are generated in the figures folder.
 python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./dataset_info.txt"
 
-#This script will conduct experiments on the trace at the specified path and generate experimental result figures in the figures folder: a miss rate result figure (bmr.pdf) and a computational overhead result figure (cpu_overhead.pdf). 
+#This script will conduct experiments on the trace at the specified path(We have provided some trace samples in the data folder) and generate experimental result figures in the figures folder: a byte miss rate result figure (bmr.pdf), an object miss rate result figure (omr.pdf) and a computational overhead result figure (cpu_overhead.pdf). 
 ./run_scripts.sh
-'''
+```

@@ -143,31 +143,30 @@ def draw_miss_ratio_figure():
     mpl.rcParams['pdf.fonttype'] = 42
     mpl.rcParams['ps.fonttype'] = 42
     algorithms = ['LHD', 'GDSF', 'ARC', 'Sieve', 'S3FIFO-0.1000-2', 'WTinyLFU-w0.01-SLRU', 'LeCaR', 'Cacheus', 'TLCache-BMR']
-    metrics =  ['bmr']
+    metrics =  ['bmr', 'omr']
     for i, metric in enumerate(metrics):
-        for smetric in metrics:
-            files = [f"{current_path}/excel/cloudphysics_{metric}_1000.xlsx", 
-                    f"{current_path}/excel/tencentblock_{metric}_1000.xlsx", 
-                    f"{current_path}/excel/twitter_{metric}_1000.xlsx",
-                    f"{current_path}/excel/alibaba_{metric}_1000.xlsx",
-                    f"{current_path}/excel/cloudphysics_{metric}_10.xlsx", 
-                    f"{current_path}/excel/tencentblock_{metric}_10.xlsx", 
-                    f"{current_path}/excel/twitter_{metric}_10.xlsx",
-                    f"{current_path}/excel/alibaba_{metric}_10.xlsx",
-                    ]
-            xlabels = ['(a) CloudPhysics, small cache size', '(b) Tencent CBS, small cache size', '(c) Twitter, small cache size', '(d) Alibaba, small cache size',
-                    '(e) CloudPhysics, large cache size', '(f) Tencent CBS, large cache size', '(g) Twitter, large cache size', '(h) Alibaba, large cache size']
-            if metric == 'bmr':
-                ylabels = [f'Byte miss ratio reduction from {benchmark_algo}'] * len(files)
-            else:
-                ylabels = [f'Object miss ratio reduction from {benchmark_algo}'] * len(files)
-            plt.figure(figsize=(16 * len(files), 32))
-            cnt = 1
-            plt.subplots_adjust(hspace=0.5, wspace=0.12)
-            for i, j in [[0, 1000], [len(files)//2, 10]]:
-                draw_box_plot(xlabels[i: i+ len(files) // 2], ylabels[i: i+len(files) // 2], files[i: i+len(files) // 2], algorithms, cnt, 2, fontsize=68)
-                cnt += len(files)//2
-            plt.savefig(f'./figures/{metric}.pdf', format='pdf', dpi=900, bbox_inches='tight')
+        files = [f"{current_path}/excel/cloudphysics_{metric}_1000.xlsx", 
+                f"{current_path}/excel/tencentblock_{metric}_1000.xlsx", 
+                f"{current_path}/excel/twitter_{metric}_1000.xlsx",
+                f"{current_path}/excel/alibaba_{metric}_1000.xlsx",
+                f"{current_path}/excel/cloudphysics_{metric}_10.xlsx", 
+                f"{current_path}/excel/tencentblock_{metric}_10.xlsx", 
+                f"{current_path}/excel/twitter_{metric}_10.xlsx",
+                f"{current_path}/excel/alibaba_{metric}_10.xlsx",
+                ]
+        xlabels = ['(a) CloudPhysics, small cache size', '(b) Tencent CBS, small cache size', '(c) Twitter, small cache size', '(d) Alibaba, small cache size',
+                '(e) CloudPhysics, large cache size', '(f) Tencent CBS, large cache size', '(g) Twitter, large cache size', '(h) Alibaba, large cache size']
+        if metric == 'bmr':
+            ylabels = [f'Byte miss ratio reduction from {benchmark_algo}'] * len(files)
+        else:
+            ylabels = [f'Object miss ratio reduction from {benchmark_algo}'] * len(files)
+        plt.figure(figsize=(16 * len(files), 32))
+        cnt = 1
+        plt.subplots_adjust(hspace=0.5, wspace=0.12)
+        for i, j in [[0, 1000], [len(files)//2, 10]]:
+            draw_box_plot(xlabels[i: i+ len(files) // 2], ylabels[i: i+len(files) // 2], files[i: i+len(files) // 2], algorithms, cnt, 2, fontsize=68)
+            cnt += len(files)//2
+        plt.savefig(f'./figures/{metric}.pdf', format='pdf', dpi=900, bbox_inches='tight')
 
 
 def draw_tp_box_plot(f, algorithms, ax1, ax2, cnt, fontsize=40):
