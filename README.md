@@ -75,7 +75,7 @@ result/tencentBlock_ns3964.csv                      TLCache-BMR cache size      
 ## Evaluate algorithms through scripts
 ```bash
 
-# <dataset_path>  is the path of the traces, which can contain multiple traces; <dataset_info> records the number of unique bytes(the minimum cache size required to store the entire trace). It is composed of a dictionary, where the key value represents the name of the trace and the value represents the number of unique bytes; <algo> is a list containing the caching strategies that need to be measured; <metric> only includes object miss ratio(omr) and byte miss ratio(bmr).
+# <dataset_path>  is the path of the traces, which can contain multiple traces; <dataset_info> records the number of unique bytes(the minimum cache size required to store the entire trace). It is composed of a dictionary, where the key represents the name of the trace and the value represents the number of unique bytes; <algo> is a list containing the caching strategies that need to be measured; <metric> only includes object miss ratio(omr) and byte miss ratio(bmr).
 
 cd 3L-Cache/3LCache/scripts
 
