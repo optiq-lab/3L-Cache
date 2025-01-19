@@ -105,3 +105,5 @@ python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'ca
 # The key figures (Figure 6, Figure 8, and 10) can be generated via this script with real traces or sample traces.
 ./run_scripts.sh
 ```
+## How to repoduce all results in the paper
+
