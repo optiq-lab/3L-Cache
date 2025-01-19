@@ -107,14 +107,14 @@ python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'ca
 ```
 ## How to repoduce all results in the paper
 
-Download the traces and convert them into CSV files(for example, download the Alibaba dataset from the following link). 
-[link](http://block-traces.oss-cn-beijing.aliyuncs.com/alibaba_block_traces_2020.tar.gz)
+Download the traces and convert them into CSV files(for example, download the Alibaba dataset from the [link](http://block-traces.oss-cn-beijing.aliyuncs.com/alibaba_block_traces_2020.tar.gz)). 
+
+
+Select traces with more than 10 million requests and put it in a folder (for example, download the Alibaba dataset and store it in the~/Alibaba folder).
+
+Count unique bytes of traces for setting cache size. Here, we provide unique bytes of some traces in the 3L-Cache/3LCache/scripts folder.
 
 ```bash
-# Select traces with more than 10 million requests and put it in a folder (for example, download the Alibaba dataset and store it in the~/Alibaba folder).
-
-# Count unique bytes of traces for setting cache size. Here, we provide unique bytes of some traces in the 3L-Cache/3LCache/scripts folder.
-
 # Then execute the following command to obtain the miss ratio of this dataset. 
 # In the figures folder, a result figure of the byte miss ratio for the Alibaba dataset will be generated(Figure 6(d) and Figure 6(h)).
 python3 miss_ratio_boxplot.py --algo="['lhd', 'gdsf', 'arc', 'sieve', 's3fifo', 'tinylfu', 'lecar', 'cacheus', 'lrb', '3lcache']" --dataset_path="~/Alibaba/" --dataset_info="./trace_info/alibaba_info.txt" --metric="bmr"
