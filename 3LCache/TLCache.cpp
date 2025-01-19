@@ -7,6 +7,8 @@ using namespace chrono;
 using namespace std;
 using namespace TLCache;
 
+
+// model training
 void TLCacheCache::train() {
     auto timeBegin = chrono::system_clock::now();
     if (booster) LGBM_BoosterFree(booster);
@@ -46,6 +48,7 @@ void TLCacheCache::train() {
     MAX_EVICTION_BOUNDARY[0] = MAX_EVICTION_BOUNDARY[1];
     origin_current_seq = current_seq;
 
+    // Update hsw.
     if (n_req > pow(10, 6) && is_full) {
         if ((n_window_hit - n_hit) * 1.0 / (n_hit * (hsw - 1)) > 0.01) { 
             if (hsw - 1 < (n_req - n_hit) / (n_window_hit - n_hit))
@@ -56,6 +59,7 @@ void TLCacheCache::train() {
     }
 }
 
+// Perform a random sampling in the cache window once
 void TLCacheCache::sample() {
     auto rand_idx = _distribution(_generator);
     uint32_t pos = rand_idx % (in_cache.metas.size() + out_cache.metas.size());
@@ -84,6 +88,8 @@ bool TLCacheCache::lookup(const SimpleRequest &req) {
         }
         Meta &meta = list_idx == 0 ?  in_cache.metas[list_pos]: out_cache.metas[uint32_t(list_pos - out_cache.front_index)];
         auto sample_time = meta._sample_times;
+        // Randomly sample with a certain probability.
+        // The sampling probability can be adjusted, and a probability greater than 25% has little impact on cache efficiency.
         if (sample_time != 0 && (_distribution(_generator) % 4 == 0 || !booster)) {
             uint32_t future_distance = current_seq - sample_time;
             training_data->emplace_back(meta, sample_time, future_distance, meta._key);
@@ -95,7 +101,8 @@ bool TLCacheCache::lookup(const SimpleRequest &req) {
         } else {
             meta._sample_times = 0;
         }
-
+        
+        // Update metadata.
         meta.update(current_seq);
         if (!list_idx) { 
             if(samplepointer == list_pos){
@@ -114,11 +121,12 @@ bool TLCacheCache::lookup(const SimpleRequest &req) {
     if (is_sampling) {
         sample();
     }
-
+    // Delete object metadata beyond the sliding window
     erase_out_cache();
     return ret;
 }
 
+// Delete object metadata that exceeds the window
 void TLCacheCache::erase_out_cache() {
     max_out_cache_size = in_cache.metas.size() * (hsw - 1) + 2;
     
@@ -147,6 +155,7 @@ void TLCacheCache::erase_out_cache() {
     }
 }
 
+// Cache new objects
 void TLCacheCache::admit(const SimpleRequest &req) {
     const uint64_t &size = req.size;
     if (size > _cacheSize) {
@@ -156,7 +165,6 @@ void TLCacheCache::admit(const SimpleRequest &req) {
     auto it = key_map.find(req.id);
     uint32_t pos;
     if (it == key_map.end()){
-
         pos = in_cache.metas.size();
         in_cache.metas.emplace_back(Meta(req.id, req.size, current_seq));
         in_cache.dq.emplace_back(CircleList());
@@ -173,41 +181,43 @@ void TLCacheCache::admit(const SimpleRequest &req) {
     in_cache.request(pos);
     
     _currentSize += size;
-    
+    // Record new objects.
     if (booster) {
         new_obj_size += req.size;
         new_obj_keys.emplace_back(req.id);
     }
 }
 
+// sample eviction candidates
 uint32_t TLCacheCache::rank() {
     vector<uint32_t> sampled_objects;
     if (initial_queue_length == 0) {
         initial_queue_length = in_cache.metas.size();
     }
-    // 防止有trace在小缓存小只能存1-2个对象
+    // Prevent trace from storing only 1-2 objects in a small cache.
     if (sample_rate >= initial_queue_length * 0.01 + eviction_rate)
         sample_rate = initial_queue_length > 2 ? initial_queue_length * 0.01 + eviction_rate : 1;
-    // 新对象的采样
+    // Sampling of new objects
     sampled_objects = quick_demotion();
-    // 防止出现特定工作负载下，新对象比例异常的问题，如果新对象的占比高出预设比例一个量级，则优先暂时不进行定向重置采样
     if (new_obj_size < _currentSize * reserved_space / 10) {
         unsigned int idx_row = 0;
         uint16_t freq = 0;
+        // Sampling objects that have been waiting for a long time.
         while (idx_row < sample_rate && sampled_objects.size() < initial_queue_length) {
             freq = in_cache.metas[samplepointer]._freq - 1;
             if (evcition_distribution[3] == 0 && scan_length > initial_queue_length * sampling_lru / 100){
                 evcition_distribution[2] = evcition_distribution[0], evcition_distribution[3] = evcition_distribution[1];
                 evcition_distribution[1] = 0, evcition_distribution[0] = 0;
             }
+            // Sample if the sampling conditions are met.
             if (freq  < sample_boundary || scan_length <= initial_queue_length * sampling_lru / 100 + eviction_rate) {
                 sampled_objects.emplace_back(samplepointer);
                 idx_row++;
             }
-
+            // Record scan length
             scan_length++;
-            
             if (scan_length >= initial_queue_length) {
+                // Sample if the sampling conditions are met
                 initial_queue_length = in_cache.metas.size();
                 sample_rate = 1024;
                 if (sample_rate >= initial_queue_length * 0.01 + eviction_rate) {
@@ -225,7 +235,7 @@ uint32_t TLCacheCache::rank() {
                 uint32_t eviciton_sum = 0, p99 = 0;
                 for (int i =  0; i < 16; i++)
                     eviciton_sum += object_distribution_n_eviction[i];
-                // 粗粒度划分频率
+                // Coarse grained division frequency
                 for (int i = 0; i < 16; i++) {  
                     p99 += object_distribution_n_eviction[i];
                     if (p99 >= 0.99 * eviciton_sum) {
@@ -252,6 +262,7 @@ uint32_t TLCacheCache::rank() {
             }
             samplepointer = in_cache.dq[samplepointer].next;
         }
+        // 
         spointer_timestamp = in_cache.metas[sampled_objects.back()]._past_timestamp;
         evcition_distribution[1] += sample_rate;
     }
@@ -259,12 +270,14 @@ uint32_t TLCacheCache::rank() {
     return sampled_objects.size();
 }
 
+// Sample new objects.
 vector<uint32_t> TLCacheCache::quick_demotion() {
     vector<uint32_t> sampled_objects;
     int i, j = 0;
     while (new_obj_size > _currentSize * reserved_space / 100  && j < sample_rate * 1.5 && i < new_obj_keys.size()) {
         auto it = key_map.find(new_obj_keys[i]);
         if (it != key_map.end()) {
+            // Object in cache
             if (it->second.list_idx == 0) {
                 new_obj_size -= in_cache.metas[it->second.list_pos]._size;
                 sampled_objects.emplace_back(it->second.list_pos);
@@ -283,6 +296,7 @@ vector<uint32_t> TLCacheCache::quick_demotion() {
 }
 
 void TLCacheCache::evict() {
+    // get eviction objects
     auto epair = evict_predobj();
     evict_with_candidate(epair);
 }
@@ -326,10 +340,12 @@ pair<uint64_t, uint32_t> TLCacheCache::evict_predobj(){
     {
         auto pos = in_cache.q.head;
         auto &meta = in_cache.metas[pos];
+        // Execute LRU policy before model training.
         if (!booster) {
             return {meta._key, pos};
         } 
     }
+    // If the eviction count is greater than 0, the eviction will be executed directly.
     if (evict_nums <= 0 || pred_map.empty()) {
         evict_nums = rank() / eviction_rate;
     }
@@ -338,6 +354,7 @@ pair<uint64_t, uint32_t> TLCacheCache::evict_predobj(){
     uint64_t key;
     while (!pred_times.empty())
     {
+        // Obtain the data of heap top.
         reuse_time = pred_times.front().reuse_time;
         key = pred_times.front().key;
         pop_heap(pred_times.begin(), pred_times.end(), 
@@ -345,6 +362,7 @@ pair<uint64_t, uint32_t> TLCacheCache::evict_predobj(){
             return a.reuse_time < b.reuse_time;
         });
         pred_times.pop_back();
+        // Determine whether the data is valid.
         if(pred_map.find(key) != pred_map.end() && pred_map[key] == reuse_time){
             uint32_t old_pos = key_map.find(key)->second.list_pos;
             object_distribution_n_eviction[uint16_t(log2(in_cache.metas[old_pos]._freq))]++;
@@ -357,7 +375,7 @@ pair<uint64_t, uint32_t> TLCacheCache::evict_predobj(){
     return {-1, -1};
 }
 
-
+// Predict the eviction candidates.
 void TLCacheCache::prediction(vector<uint32_t> sampled_objects) {
     uint32_t sample_nums = sampled_objects.size();
     int32_t indptr[sample_nums + 1];
@@ -371,21 +389,23 @@ void TLCacheCache::prediction(vector<uint32_t> sampled_objects) {
     unsigned int idx_feature = 0;
     uint32_t pos;
     unsigned int idx_row = 0;
+    // collect prediction samples
     for (; idx_row < sample_nums; idx_row++) {
         pos = sampled_objects[idx_row];
         auto &meta = in_cache.metas[pos];
         keys[idx_row] = meta._key;
         poses[idx_row] = pos;
         indices[idx_feature] = 0;
-        // 年龄
+        // age
         data[idx_feature++] = current_seq - meta._past_timestamp;
         
         past_timestamps[idx_row] = meta._past_timestamp;
 
         uint8_t j = 0;
-
+        // freqency
         uint16_t n_within = meta._freq;
         if (meta._extra) {
+            // inter-arrival times
             for (j = 0; j < meta._extra->_past_distance_idx && j < max_n_past_distances; ++j) {
                 uint8_t past_distance_idx = (meta._extra->_past_distance_idx - 1 - j) % max_n_past_distances;
                 uint32_t &past_distance = meta._extra->_past_distances[past_distance_idx];
@@ -396,6 +416,7 @@ void TLCacheCache::prediction(vector<uint32_t> sampled_objects) {
 
         indices[idx_feature] = max_n_past_timestamps;
         data[idx_feature++] = meta._size;
+        // size
         sizes[idx_row] = meta._size;
 
         indices[idx_feature] = max_n_past_timestamps + 1;
@@ -405,6 +426,7 @@ void TLCacheCache::prediction(vector<uint32_t> sampled_objects) {
     }
     int64_t len;
     double scores[sample_nums];
+    // prediction
     LGBM_BoosterPredictForCSR(booster,
                               static_cast<void *>(indptr),
                               C_API_DTYPE_INT32,

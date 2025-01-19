@@ -23,10 +23,10 @@ set(EXPORT_COMPILE_COMMANDS ON)
 # echo madvise | sudo tee /sys/kernel/mm/transparent_hugepage/enabled
 option(USE_HUGEPAGE "use transparent hugepage" ON)
 option(ENABLE_TESTS "whether enable test" ON)
-option(ENABLE_GLCACHE "enable group-learned cache" OFF)
+option(ENABLE_GLCACHE "enable group-learned cache" ON)
 option(SUPPORT_TTL "whether support TTL" OFF)
 option(OPT_SUPPORT_ZSTD_TRACE "whether support zstd trace" ON)
-option(ENABLE_LRB "enable LRB" OFF)
+option(ENABLE_LRB "enable LRB" ON)
 set(LOG_LEVEL NONE CACHE STRING "change the logging level")
 set_property(CACHE LOG_LEVEL PROPERTY STRINGS INFO WARN ERROR DEBUG VERBOSE VVERBOSE VVVERBOSE)
 

@@ -21,14 +21,17 @@ using spp::sparse_hash_map;
 
 namespace TLCache {
     static const uint8_t max_n_past_timestamps = 4;
+    // Number of  inter-arrival times.
     static const uint8_t max_n_past_distances = 3;
+    // Number of training samples.
     static const uint32_t batch_size = 131072 / 2;
-
+// heap metadata
 struct HeapUint {
     float reuse_time;
     uint64_t key;
 };
 
+// Metadata of object information
 struct MetaExtra {
     vector<uint32_t> _past_distances;
     //the next index to put the distance
@@ -58,6 +61,7 @@ public:
     uint64_t _past_timestamp;
     uint16_t _freq;
     MetaExtra *_extra = nullptr;
+
     uint64_t _sample_times;
 
     Meta(const uint64_t &key, const uint64_t &size, const uint64_t &past_timestamp) {
@@ -105,13 +109,16 @@ struct LinkHE {
     uint32_t tail = -1;
 };
 
+// The linked list structure of cache queue.
 class CacheUpdateQueue {
 public:
     deque<Meta> metas;
+    // The position of the first element in the queue.
     uint32_t front_index=0;
     vector<CircleList> dq;
     LinkHE q;
 
+    // hit, move a object to tail/head
     uint32_t re_request(const uint32_t pos) {
         if (pos == q.head){
             q.tail = q.head;
@@ -131,6 +138,7 @@ public:
         return q.tail;
     }
 
+    // new object request, insert a new object into tail/head
     uint32_t request(const uint32_t pos) {
         if (q.head == -1) {
             q.head = pos;
@@ -148,6 +156,7 @@ public:
         return q.tail;
     }
 
+    // remove objects from the cache queue during eviction.
     void erase(const uint32_t pos) {
         uint32_t next = dq[pos].next;
         uint32_t prev = dq[pos].prev;
@@ -180,11 +189,13 @@ public:
         int32_t counter = indptr.back();
 
         indices.emplace_back(0);
-        // 等待时间
+        // waitting time.
         data.emplace_back(sample_timestamp - meta._past_timestamp);
         ++counter;
         int j = 0;
+        // freqency.
         uint16_t n_within = meta._freq;
+        // inter-arrival times.
         if (meta._extra) {
             for (; j < meta._extra->_past_distance_idx && j < max_n_past_distances; ++j) {
                 uint8_t past_distance_idx = (meta._extra->_past_distance_idx - 1 - j) % max_n_past_distances;
@@ -227,40 +238,46 @@ public:
     uint64_t current_seq = -1;
     uint32_t n_feature;
     sparse_hash_map<uint64_t, float> pred_map;
-    // 用于记录对象的预测结果, 同时记录id, 以保证状态切换
+    // Used to record the predicted results of objects and also record IDs.
     vector<HeapUint> pred_times;
-    // 驱逐候选对象采样步长与区间
+    // scan length
     uint64_t scan_length = 0;
-    // 新对象
+    // new objct
     vector<uint64_t> new_obj_keys;
-    // 新对象占用地缓存空间
     uint64_t new_obj_size = 0;
-    // 驱逐对象的数量
+    // eviction count
     int evict_nums = 0;
+    // Sample rate L, adjustable
     uint16_t sample_rate = 1024;
+    // prediction eviction ratio
     uint8_t eviction_rate = 2;
+    // f
     uint16_t sample_boundary = 1;
+    // x
     uint8_t sampling_lru = 1;
     uint64_t *evcition_distribution = (uint64_t*)malloc(sizeof(uint64_t) * 4);
     uint32_t *object_distribution_n_eviction = (uint32_t*)malloc(sizeof(uint32_t) * 16);
     uint32_t initial_queue_length = 0;
     uint64_t origin_current_seq = 0;
+    // Q
     uint8_t reserved_space = 2;
-    // 采样指针
+    // sampling pointer
     uint32_t samplepointer = 0;
     uint8_t hsw = 2;
     uint64_t MAX_EVICTION_BOUNDARY[2] = {0, 0};
     uint32_t max_out_cache_size = 2;
-    // 窗口满了后
     uint8_t is_full = 0;
-    // 对象命中率的时间基线
+    // miss ratio
     uint64_t n_req = 0;
     uint64_t n_hit = 0;
     uint64_t n_window_hit=0;
     uint64_t spointer_timestamp = 0;
+    // Slide object information within the window
     sparse_hash_map<uint64_t, KeyMapEntryT> key_map;
 
+    // cache queue
     CacheUpdateQueue in_cache;
+    // history information
     CacheUpdateQueue out_cache;
 
     TrainingData *training_data;
@@ -271,8 +288,10 @@ public:
     double training_time = 0;
     double inference_time = 0;
 
+    // Determine whether the model has been trained.
     BoosterHandle booster = nullptr;
 
+    // Model training parameters
     unordered_map<string, string> training_params = {
             {"boosting",         "gbdt"},
             {"objective",        "regression"},
@@ -291,9 +310,9 @@ public:
     enum ObjectiveT : uint8_t {
         byte_miss_ratio = 0, object_miss_ratio = 1
     };
-    // ObjectiveT objective = byte_miss_ratio;
     ObjectiveT objective = byte_miss_ratio;
 
+    // random seed
     default_random_engine _generator = default_random_engine();
     uniform_int_distribution<std::size_t> _distribution = uniform_int_distribution<std::size_t>();
     bool is_sampling = false;
