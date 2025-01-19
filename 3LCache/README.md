@@ -17,7 +17,7 @@ Used to save the generated experimental result figure.
 
 
 ### 3LCache/scripts/trace_info
-Save the information of the dataset for determining the cache size during the experiment. The file in trace_info records the number of unique bytes(the minimum cache size required to store the entire trace). It is composed of a dictionary, where the key represents the name of the trace and the value represents the number of unique bytes.
+Save the information of the dataset for determining the cache size during the experiment. The file in the trace_info folder records the number of unique bytes(the minimum cache size required to store the entire trace). It is composed of a dictionary, where the key represents the name of the trace and the value represents the number of unique bytes.
 
 ### miss_ratio_boxplot.py
 ```bash
@@ -27,6 +27,9 @@ Save the information of the dataset for determining the cache size during the ex
 # The generated experimental results are kept in 3LCache/scripts/result, and corresponding boxplots are generated in the figures folder.
 # Execute the command as follows:
 python3 miss_ratio_boxplot.py --dataset_path=<dataset_path>  --dataset_info=<dataset_info> --algo=<eviction_algo> --metric=<metric>
+
+# Example
+python3 miss_ratio_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'cacheus', 'gdsf', 'tinylfu', 's3fifo', 'lru','arc']" --dataset_path="../../data/" --dataset_info="./trace_info/dataset_info.txt" --metric="bmr"
 ```
 
 ### cpu_overhead_boxplot.py

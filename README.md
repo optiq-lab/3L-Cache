@@ -112,7 +112,7 @@ Download the traces and convert them into CSV files(for example, download the Al
 
 Select traces with more than 10 million requests and put it in a folder (for example, download the Alibaba dataset and store it in the~/Alibaba folder).
 
-Count unique bytes of traces for setting cache size. Here, we provide unique bytes of some traces in the 3L-Cache/3LCache/scripts folder.
+Count unique bytes of traces for setting cache size. Here, we provide unique bytes of some traces in the 3L-Cache/3LCache/scripts/trace_info folder.
 
 ```bash
 # Then execute the following command to obtain the miss ratio of this dataset. 
