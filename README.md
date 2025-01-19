@@ -6,6 +6,11 @@ This artifact provides the source code of 3L-Cache and scripts to reproduce expe
 
 #### 3L Cache is implemented in the [libCacheSim](https://github.com/1a1a11a/libCacheSim) library, and its experimental environment configuration is consistent with libCacheSim.
 
+Repo Structure
+
+<Repo>/ -- Forked from LibCacheSim, which is a platform for cache evaluation. For details, please visit [LibCacheSim](https://github.com/1a1a11a/libCacheSim).
+<Repo>/3LCache -- Our 3L-Cache implementation. For details, please visit [3LCache](https://github.com/optiq-lab/3L-Cache/tree/main/3LCache).
+
  ## Supported Platforms
 - Software Requirements: Ubuntu 18.04, cmake 3.28.6
 
