@@ -1,0 +1,21 @@
+result/io_traces_ns117.csv                            Sieve cache size      256MiB, 24200000 req, miss ratio 0.7259, byte miss ratio 0.9095
+result/io_traces_ns117.csv                            Sieve cache size    25691MiB, 24200000 req, miss ratio 0.5056, byte miss ratio 0.5466
+result/io_traces_ns117.csv                            LeCaR cache size      256MiB, 24200000 req, miss ratio 0.7521, byte miss ratio 0.9213
+result/io_traces_ns117.csv                            LeCaR cache size    25691MiB, 24200000 req, miss ratio 0.5359, byte miss ratio 0.6780
+result/io_traces_ns117.csv                             FIFO cache size      256MiB, 24200000 req, miss ratio 0.7955, byte miss ratio 0.9363
+result/io_traces_ns117.csv                             FIFO cache size    25691MiB, 24200000 req, miss ratio 0.5633, byte miss ratio 0.7008
+result/io_traces_ns117.csv                              LRU cache size      256MiB, 24200000 req, miss ratio 0.7839, byte miss ratio 0.9324
+result/io_traces_ns117.csv                              LRU cache size    25691MiB, 24200000 req, miss ratio 0.5399, byte miss ratio 0.6892
+result/io_traces_ns117.csv                  S3FIFO-0.1000-2 cache size      256MiB, 24200000 req, miss ratio 0.7163, byte miss ratio 0.9048
+result/io_traces_ns117.csv                  S3FIFO-0.1000-2 cache size    25691MiB, 24200000 req, miss ratio 0.4959, byte miss ratio 0.5193
+result/io_traces_ns117.csv                              LHD cache size      256MiB, 24200000 req, miss ratio 0.6549, byte miss ratio 0.9482
+result/io_traces_ns117.csv                              LHD cache size    25691MiB, 24200000 req, miss ratio 0.3745, byte miss ratio 0.7581
+result/io_traces_ns117.csv                          Cacheus cache size      256MiB, 24200000 req, miss ratio 0.7214, byte miss ratio 0.9087
+result/io_traces_ns117.csv                          Cacheus cache size    25691MiB, 24200000 req, miss ratio 0.5092, byte miss ratio 0.5709
+result/io_traces_ns117.csv                              LFU cache size      256MiB, 24200000 req, miss ratio 0.8628, byte miss ratio 0.9833
+result/io_traces_ns117.csv                              LFU cache size    25691MiB, 24200000 req, miss ratio 0.6162, byte miss ratio 0.6148
+result/io_traces.ns117.csv                      TLCache-BMR cache size      256MiB, 24200000 req, miss ratio 0.7049, byte miss ratio 0.8991
+result/io_traces.ns117.csv                      TLCache-BMR cache size    25691MiB, 24200000 req, miss ratio 0.5006, byte miss ratio 0.5136
+result/io_traces.ns117.csv                      TLCache-OMR cache size      256MiB, 24200000 req, miss ratio 0.6371, byte miss ratio 0.9133
+result/io_traces.ns117.csv                      TLCache-OMR cache size    25691MiB, 24200000 req, miss ratio 0.4131, byte miss ratio 0.6191
+
