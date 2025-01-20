@@ -107,15 +107,26 @@ python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'ca
 ```
 ## How to repoduce all results in the paper
 
-Download the traces and convert them into CSV files(for example, download the Alibaba dataset from the [link](http://block-traces.oss-cn-beijing.aliyuncs.com/alibaba_block_traces_2020.tar.gz)). 
+### Step1
+Download the traces(download datasets from the [link](#traces)). 
 
+### Step2
+Process the dataset according to the trace format([link](#trace-format)) we provide.
 
-Select traces with more than 10 million requests and put it in a folder (for example, store them in the ~/Alibaba folder).
+### Step3
+Select traces with more than 10 million requests and put it in the [data](./data/) folder.
 
-Count unique bytes of traces for setting cache size. Here, we provide unique bytes of some traces in the 3L-Cache/3LCache/scripts/trace_info folder.
+### Step4
+Count unique bytes of traces for setting cache size. Here, we provide unique bytes of some traces in the [trace_info](./3LCache/scripts/trace_info/) folder.
 
+### Step5
+Execute the following command. This command will read traces under 3L-Cache/data, conduct experiments, and finally generate experimental result figures in the [figures](./3LCache/scripts/figures/) folder.
 ```bash
-# Then execute the following command to obtain the miss ratio of this dataset. 
+cd 3L-Cache/3LCache/scripts
+./run_scripts.sh
+```
+
+<!-- # Then execute the following command to obtain the miss ratio of this dataset. 
 # In the figures folder, a result figure of the byte miss ratio for the Alibaba dataset will be generated(Figure 6(d) and Figure 6(h)).
 python3 miss_ratio_boxplot.py --algo="['lhd', 'gdsf', 'arc', 'sieve', 's3fifo', 'tinylfu', 'lecar', 'cacheus', 'lrb', '3lcache']" --dataset_path="~/Alibaba/" --dataset_info="./trace_info/alibaba_info.txt" --metric="bmr"
 
@@ -123,5 +134,4 @@ python3 miss_ratio_boxplot.py --algo="['lhd', 'gdsf', 'arc', 'sieve', 's3fifo', 
 python3 miss_ratio_boxplot.py --algo="['lhd', 'gdsf', 'arc', 'sieve', 's3fifo', 'tinylfu', 'lecar', 'cacheus', 'lrb', '3lcache']" --dataset_path="~/Alibaba/" --dataset_info="./trace_info/alibaba_info.txt" --metric="omr"
 
 # In the figures folder, a result figure of the cpu overhead for the Alibaba dataset will be generated.
-python3 cpu_overhead_boxplot.py --algo="['lhd', 'gdsf', 'arc', 'sieve', 's3fifo', 'tinylfu', 'lecar', 'cacheus', 'lrb', '3lcache']" --dataset_path="~/Alibaba/" --dataset_info="./trace_info/alibaba_info.txt"
-```
+python3 cpu_overhead_boxplot.py --algo="['lhd', 'gdsf', 'arc', 'sieve', 's3fifo', 'tinylfu', 'lecar', 'cacheus', 'lrb', '3lcache']" --dataset_path="~/Alibaba/" --dataset_info="./trace_info/alibaba_info.txt" -->

@@ -3,7 +3,15 @@
 
 ## 3L-Cache Algorithm
 The implementation files of 3L-Cache mainly include TLCache.cpp and TLCache.h, while other files mainly include interfaces.
-In the TLCache.cpp file, we mainly implemented the lookup(), admit(), and evict() interfaces, which are used to query whether the request has been hit, cache misses objects, and evict objects when the cache space is insufficient, respectively
+In the TLCache.cpp file, we mainly implemented the lookup(), admit(), and evict() interfaces.
+### lookup()
+When a request arrives, the lookup() interface is called to check if the requested object is in the sliding window. If so, update the metadata of the object. If the object hits, update the cache queue. Finally, the interface will return the hit status of the request.
+
+### admit()
+When the requested object is not hit, call the admit() interface. The admit() interface will insert the new object into the cache queue.
+
+### evict()
+When the cache space is insufficient to cache a new object, call the evict() interface to evict the cached object. If the model is not trained properly, the LRU policy is executed to evict the object with the longest waiting time. If the model has already been trained, sample and eviction candidates, and perform prediction and eviction. the evict() interface will be continuously called until the cache space can accommodate new objects.
 
 ## Script
 The Scripts folder contains some data and executed scripts.
