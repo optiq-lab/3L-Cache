@@ -382,7 +382,6 @@ public:
 
     pair<uint64_t, uint32_t> evict_predobj();
 
-
     void remove_from_outcache_metas(Meta &meta, unsigned int &pos, const uint64_t &key);
 
     vector<int> get_object_distribution_n_past_timestamps() {

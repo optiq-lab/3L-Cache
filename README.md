@@ -110,7 +110,7 @@ python3 cpu_overhead_boxplot.py --algo="['3lcache', 'lecar', 'lhd', 'sieve', 'ca
 Download the traces and convert them into CSV files(for example, download the Alibaba dataset from the [link](http://block-traces.oss-cn-beijing.aliyuncs.com/alibaba_block_traces_2020.tar.gz)). 
 
 
-Select traces with more than 10 million requests and put it in a folder (for example, download the Alibaba dataset and store it in the~/Alibaba folder).
+Select traces with more than 10 million requests and put it in a folder (for example, store them in the~/Alibaba folder).
 
 Count unique bytes of traces for setting cache size. Here, we provide unique bytes of some traces in the 3L-Cache/3LCache/scripts/trace_info folder.
 
