@@ -68,7 +68,7 @@ After building and installing, cachesim should be in the _build/bin/ directory.
 ## Examples
 ```bash
 # unzip a trace
-unzip ~/3L-Cache/data/tencentBlock_ns3964.zip
+unzip ~/3L-Cache/data/tencentBlock_ns3964.zip -d ~/3L-Cache/data/
 
 ~/3L-Cache/_build/bin/cachesim ~/3L-Cache/data/tencentBlock_ns3964.csv csv 3lcache-omr 1347453593 -t "time-col=1, obj-id-is-num=true, obj-id-col=2, obj-size-col=3"
 # Output object miss ratio
