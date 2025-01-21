@@ -248,7 +248,7 @@ public:
     // eviction count
     int evict_nums = 0;
     // Sample rate L, adjustable
-    uint16_t sample_rate = 1024;
+    uint16_t sample_rate = 2;
     // prediction eviction ratio
     uint8_t eviction_rate = 2;
     // f

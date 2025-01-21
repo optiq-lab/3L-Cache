@@ -195,6 +195,7 @@ uint32_t TLCacheCache::rank() {
         initial_queue_length = in_cache.metas.size();
     }
     // Prevent trace from storing only 1-2 objects in a small cache.
+    sample_rate = 1024;
     if (sample_rate >= initial_queue_length * 0.01 + eviction_rate)
         sample_rate = initial_queue_length > 2 ? initial_queue_length * 0.01 + eviction_rate : 2;
     // Sampling of new objects
