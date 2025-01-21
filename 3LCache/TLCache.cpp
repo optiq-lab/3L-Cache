@@ -196,7 +196,7 @@ uint32_t TLCacheCache::rank() {
     }
     // Prevent trace from storing only 1-2 objects in a small cache.
     if (sample_rate >= initial_queue_length * 0.01 + eviction_rate)
-        sample_rate = initial_queue_length > 2 ? initial_queue_length * 0.01 + eviction_rate : 1;
+        sample_rate = initial_queue_length > 2 ? initial_queue_length * 0.01 + eviction_rate : 2;
     // Sampling of new objects
     sampled_objects = quick_demotion();
     if (new_obj_size < _currentSize * reserved_space / 10) {
@@ -221,7 +221,7 @@ uint32_t TLCacheCache::rank() {
                 initial_queue_length = in_cache.metas.size();
                 sample_rate = 1024;
                 if (sample_rate >= initial_queue_length * 0.01 + eviction_rate) {
-                    sample_rate = initial_queue_length > 2 ? initial_queue_length * 0.01 + eviction_rate : 1;
+                    sample_rate = initial_queue_length > 2 ? initial_queue_length * 0.01 + eviction_rate : 2;
                 }
                 idx_row = 0;
                 samplepointer = in_cache.q.head;
